@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/video")
+@RequestMapping("/api/video")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Контроллер контента", description = "Контроллер для работы с контентом")
+@Tag(name = "Контроллер видео", description = "Контроллер для работы с видео")
 public class VideoController {
     private final VideoService videoService;
 
@@ -26,8 +26,8 @@ public class VideoController {
     )
     @GetMapping
     public ResponseEntity<ContentVideo> getVideoContent(@RequestParam(value = "name", defaultValue = "0-none") String name) {
-        log.trace("VideoController.getVideoContent /video - name {}", name);
+        log.trace("VideoController.getVideoContent /api/video/video - name {}", name);
         ContentVideo contentVideo = videoService.getContent(name);
         return ResponseEntity.ok(contentVideo);
-    };
+    }
 }
