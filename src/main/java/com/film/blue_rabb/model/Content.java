@@ -8,9 +8,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "movie")
+@Table(name = "content")
 @NoArgsConstructor
-public class Movie {
+public class Content {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +40,9 @@ public class Movie {
 
     @OneToMany
     @Column(name = "movie_video_id")
-    private List<MovieVideo> MovieVideos;
+    private List<Video> videos;
 
-    public Movie(String nameRus, String nameEng, String description, Integer duration, byte age, char creator, Integer averageDuration, List<MovieVideo> movieVideos) {
+    public Content(String nameRus, String nameEng, String description, Integer duration, byte age, char creator, Integer averageDuration, List<Video> videos) {
         this.nameRus = nameRus;
         this.nameEng = nameEng;
         this.description = description;
@@ -50,6 +50,6 @@ public class Movie {
         this.age = age;
         this.creator = creator;
         this.averageDuration = averageDuration;
-        MovieVideos = movieVideos;
+        this.videos = videos;
     }
 }

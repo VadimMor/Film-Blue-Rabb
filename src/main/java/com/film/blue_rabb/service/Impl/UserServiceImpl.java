@@ -28,4 +28,17 @@ public class UserServiceImpl implements UserService {
 
         return null;
     }
+
+    /**
+     * Метод проверки токена
+     * @param token токен авторизации
+     */
+    @Override
+    public void checkToken(String token) {
+       log.trace("UserServiceImpl.checkToken - token {}", token);
+
+
+    }
+
+
 }

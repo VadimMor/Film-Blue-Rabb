@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "video")
 @NoArgsConstructor
-public class MovieVideo {
+public class Video {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class MovieVideo {
     @Column(name = "id_mongo")
     private String idMongo;
 
-    public MovieVideo(String fullName, String shortName, String description, Integer durationMinutes, String idMongo) {
+    public Video(String fullName, String shortName, String description, Integer durationMinutes, String idMongo) {
         this.fullName = fullName;
         this.shortName = shortName;
         this.description = description;

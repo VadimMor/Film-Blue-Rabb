@@ -12,4 +12,10 @@ public interface UserService {
      * @return токен авторизации
      */
     public AuthResponse postAuthClient(LoginClientRequest loginRequest);
+
+    /**
+     * Метод проверки токена
+     * @param token токен авторизации
+     */
+    void checkToken(String token);
 }
