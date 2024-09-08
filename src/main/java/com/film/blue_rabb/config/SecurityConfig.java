@@ -32,8 +32,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserServiceImpl userService;
-//    private final JwtRequestFilter jwtRequestFilter;
     private final JwtTokenUtils jwtTokenUtils;
+    private final IpBanFilter ipBanFilter;
 
 
     @Bean
@@ -111,6 +111,7 @@ public class SecurityConfig {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                         })
                 )
+                .addFilterBefore(ipBanFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authenticationProvider(daoAuthenticationProvider());

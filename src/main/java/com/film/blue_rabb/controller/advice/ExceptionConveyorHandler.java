@@ -81,7 +81,7 @@ public class ExceptionConveyorHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public ErrorResponse onAuthenticationException(AuthenticationException ex) {
-        return createResponseException(HttpStatus.UNAUTHORIZED, "Uncorrected login or password", ex.getMessage());
+        return createResponseException(HttpStatus.UNAUTHORIZED, "The email/login or password is incorrect!", ex.getMessage());
     }
 
     @ResponseBody
@@ -114,16 +114,6 @@ public class ExceptionConveyorHandler {
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(EmailSendingException.class)
-    public ErrorResponse onEmailSendingException(EmailSendingException ex) {
-        String errorMessage = ex.getErrorMessage().stream()
-                .map(error -> error.fieldName() + ": " + error.message())
-                .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "Email sending error", errorMessage);
-    }
-
-    @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AccessDeniedException.class)
     public ErrorResponse onAccessDeniedException(AccessDeniedException ex) {
@@ -133,6 +123,7 @@ public class ExceptionConveyorHandler {
         return createResponseException(HttpStatus.UNAUTHORIZED, "Access denied", errorMessage);
     }
 
+    @ResponseBody
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         ErrorResponse errorResponse = createResponseException(
@@ -143,17 +134,8 @@ public class ExceptionConveyorHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ValueOutOfRangeException.class)
-    public ErrorResponse onValueOutOfRangeException(ValueOutOfRangeException ex) {
-        String errorMessage = ex.getErrorMessage().stream()
-                .map(error -> error.fieldName() + ": " + error.message())
-                .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.BAD_REQUEST, "Value out of range", errorMessage);
-    }
-
-
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
@@ -177,7 +159,7 @@ public class ExceptionConveyorHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
+    @ResponseBody
     @ExceptionHandler(SignatureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleSignatureException(SignatureException ex) {
@@ -185,6 +167,27 @@ public class ExceptionConveyorHandler {
                 HttpStatus.UNAUTHORIZED,
                 "Invalid JWT signature",
                 "The JWT token's signature is not valid"
+        );
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AuthenticationUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthenticationException(AuthenticationUserException e) {
+        String errorMessage = e.getErrorMessage().stream()
+                .map(error -> error.message())
+                .collect(Collectors.joining(", "));
+        return createResponseException(HttpStatus.UNAUTHORIZED, "Authentication error", errorMessage);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BannedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBannedException(BannedException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Access is denied",
+                e.getMessage()
         );
     }
 

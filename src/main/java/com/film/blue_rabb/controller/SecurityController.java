@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,16 @@ public class SecurityController {
     )
     @Hidden
     @PostMapping("/auth")//
-    public ResponseEntity<AuthResponse> createAuthToken(@Parameter(description = "Форма авторизации") @Valid @RequestBody AuthForm authForm) {
+    public ResponseEntity<AuthResponse> createAuthToken(
+            @Parameter(description = "Форма авторизации") @Valid @RequestBody AuthForm authForm,
+            @Parameter(description = "Контейнер сервлета") HttpServletRequest httpRequest
+    ) {
         log.trace("SecurityController.createAuthToken /auth - authForm {}", authForm);
+        // Аутентификация переданный объект
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.email(), authForm.password()));
-        AuthResponse authResponse = userService.getAuthToken(authForm);
-
+        // Аутентификация и проверка пользователя
+        AuthResponse authResponse = userService.getAuthToken(authForm, httpRequest);
+        // Возвращение JSON web token
         return ResponseEntity.ok(authResponse);
     }
 }

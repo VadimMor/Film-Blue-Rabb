@@ -3,7 +3,7 @@ package com.film.blue_rabb.enums;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum StatusUserEnum {
+public enum StatusEnum {
     ACTIVE("ACTIVE"),
     BANNED("BANNED"),
     INACTIVE("INACTIVE");

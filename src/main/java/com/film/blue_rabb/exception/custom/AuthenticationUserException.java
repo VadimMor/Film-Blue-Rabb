@@ -6,11 +6,11 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ValueOutOfRangeException extends RuntimeException {
+public class AuthenticationUserException extends RuntimeException {
     private final List<ErrorMessage> errorMessage;
 
-    public ValueOutOfRangeException(List<ErrorMessage> errorMessages) {
-        super("ValueOutOfRangeException");
+    public AuthenticationUserException(List<ErrorMessage> errorMessages) {
+        super("Authentication error");
         this.errorMessage = errorMessages;
     }
 }
