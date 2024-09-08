@@ -4,19 +4,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 
 @Component
-public class TokenUtils {
+public class JwtTokenUtils {
     @Value("${app.secret-key}")
     private String secret;
 
@@ -25,17 +27,8 @@ public class TokenUtils {
 
     private final List<String> invalidToken = new ArrayList<>();
 
-    //Шифрование секретного ключа
-    private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-
-    /**
-     * Создание токена авторизации
-     * @param userDetails детаил пользователя
-     * @return токен авторизации
-     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        //Получение ролей пользователя
         List<String> rolesList = userDetails
                 .getAuthorities()
                 .stream()
@@ -44,57 +37,49 @@ public class TokenUtils {
 
         claims.put("roles", rolesList);
 
-        //Дата начала и конца использования токена авторизации
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
-
-        //Создание токена авторизации
+        SecretKey keys = new SecretKeySpec(secret.getBytes(), 0, secret.getBytes().length, "HMACSHA256");
         return Jwts.builder()
-                .claims(claims)
-                .subject(userDetails.getUsername())
-                .issuedAt(issuedDate)
-                .expiration(expiredDate)
-                .signWith(key)
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(issuedDate)
+                .setExpiration(expiredDate)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
+
     }
 
-    /**
-     * Получение логина пользователя из токена
-     * @param token токен авторизации
-     * @return логин пользователя
-     */
-    public String getLoginFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }
 
-    /**
-     * Получение ролей пользователя из токена авторизации
-     * @param token токен авторизации
-     * @return массив ролей пользователя
-     */
     public List<String> getRolesFromToken(String token)  {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> claims = getAllClaimsFromToken(token);
-
-        return objectMapper.convertValue(
-                claims.get("roles"), new TypeReference<List<String>>() {}
-        );
+        return objectMapper.convertValue(claims.get("roles"), new TypeReference<List<String>>() {
+        });
     }
 
-    /**
-     * Получение значений в токене
-     * @param token токен авторизации
-     * @return значения в токене
-     */
     private Claims getAllClaimsFromToken(String token) {
         if (invalidToken.contains(token)) {
             return Jwts.claims().build();
         }
 
         return Jwts.parser()
-                .setSigningKey(key)
+                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
                 .build()
                 .parseSignedClaims(token)
                 .getBody();
+    }
+
+    public void invalidateToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+
+            if (!invalidToken.contains(token)) {
+                invalidToken.add(token);
+            }
+        }
     }
 }
