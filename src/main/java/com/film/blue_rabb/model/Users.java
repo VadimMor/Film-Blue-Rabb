@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
@@ -27,6 +28,9 @@ public class Users {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "birthday")
+    private LocalDate birthday;
+
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role", nullable = false)
     private RoleEnum role;
@@ -41,13 +45,18 @@ public class Users {
     @Column(name = "banned_time")
     private OffsetDateTime bannedTime;
 
-    public Users(String login, String email, String password, RoleEnum role, StatusEnum status, String activeCode, OffsetDateTime bannedTime) {
+    @Column(name = "date_creation")
+    private OffsetDateTime dateCreation;
+
+    public Users(String login, String email, String password, LocalDate birthday, RoleEnum role, StatusEnum status, String activeCode, OffsetDateTime bannedTime, OffsetDateTime dateCreation) {
         this.login = login;
         this.email = email;
         this.password = password;
+        this.birthday = birthday;
         this.role = role;
         this.status = status;
         this.activeCode = activeCode;
         this.bannedTime = bannedTime;
+        this.dateCreation = dateCreation;
     }
 }

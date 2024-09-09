@@ -191,6 +191,17 @@ public class ExceptionConveyorHandler {
         );
     }
 
+    @ResponseBody
+    @ExceptionHandler(UserAlreadyCreatedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUserAlreadyCreatedException(UserAlreadyCreatedException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Registration error",
+                e.getMessage()
+        );
+    }
+
 
     private ErrorResponse createResponseException(HttpStatus status, String error, String message) {
         return new ErrorResponse(

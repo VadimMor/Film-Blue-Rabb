@@ -1,8 +1,13 @@
 package com.film.blue_rabb.service.Impl;
 
+import com.film.blue_rabb.dto.request.RegistrationUserRequest;
+import com.film.blue_rabb.dto.response.RegistrationUserResponse;
+import com.film.blue_rabb.enums.RoleEnum;
 import com.film.blue_rabb.enums.StatusEnum;
 import com.film.blue_rabb.exception.custom.AuthenticationUserException;
 import com.film.blue_rabb.exception.custom.BannedException;
+import com.film.blue_rabb.exception.custom.UserAlreadyCreatedException;
+import com.film.blue_rabb.utils.ActiveCode;
 import com.film.blue_rabb.utils.JwtTokenUtils;
 import com.film.blue_rabb.dto.request.AuthForm;
 import com.film.blue_rabb.dto.response.AuthResponse;
@@ -13,6 +18,7 @@ import com.film.blue_rabb.repository.UserRepository;
 import com.film.blue_rabb.service.*;
 import com.film.blue_rabb.service.UserService;
 import com.film.blue_rabb.utils.PasswordEncoder;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -26,6 +32,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,24 +42,26 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
+    private final MailService mailService;
+
     private final UserRepository userRepository;
 
     private final JwtTokenUtils jwtTokenUtils;
+    private final ActiveCode activeCode;
     private final PasswordEncoder passwordEncoder;
 
     /**
      * Метод получения токена авторизации
      * @param authForm форма аутентификации
-     * @param httpRequest Контейнер сервлета
      * @return токен авторизации
      */
     @Override
     @Transactional
-    public AuthResponse getAuthToken(AuthForm authForm, HttpServletRequest httpRequest) throws AuthenticationUserException, BannedException {
+    public AuthResponse getAuthToken(AuthForm authForm) throws AuthenticationUserException, BannedException {
         log.trace("UserServiceImpl.getAuthToken - authForm {}", authForm);
 
         // Поиск пользователя
-        Users user = userRepository.findFirstByEmail(authForm.email());
+        Users user = userRepository.findFirstByEmail(authForm.login(), authForm.login());
 
         // Проверка на правильно введенные данные и не активный аккаунт
         if (
@@ -90,12 +99,52 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         );
     }
 
+    /**
+     * Метод создания пользователя и сохранение в бд
+     * @param registrationUserRequest данные для регистрации
+     * @return данные о успешной регистрации
+     */
+    @Override
+    public RegistrationUserResponse createUser(RegistrationUserRequest registrationUserRequest) throws UserAlreadyCreatedException, MessagingException {
+        log.trace("UserServiceImpl.createUser - registrationUserRequest {}", registrationUserRequest);
+
+        Users user = userRepository.findFirstByEmail(registrationUserRequest.email(), registrationUserRequest.login());
+
+        if (user != null) {
+            throw new UserAlreadyCreatedException();
+        }
+
+        Users newUser = new Users(
+                registrationUserRequest.login(),
+                registrationUserRequest.email(),
+                passwordEncoder.getEncryptedPassword(registrationUserRequest.password()),
+                registrationUserRequest.birthday(),
+                RoleEnum.CLIENT,
+                StatusEnum.INACTIVE,
+                activeCode.generateCode(),
+                null,
+                OffsetDateTime.now()
+        );
+
+//        mailService.sendActiveCode(
+//                newUser.getEmail(),
+//                newUser.getActiveCode()
+//        );
+
+        userRepository.saveAndFlush(newUser);
+
+        return new RegistrationUserResponse(
+                newUser.getLogin(),
+                newUser.getEmail()
+        );
+    }
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException, AuthenticationUserException {
         log.trace("UserServiceImpl.loadUserByUsername - email {}", email);
 
-        Users user = userRepository.findFirstByEmail(email);
+        Users user = userRepository.findFirstByEmail(email, email);
 
         if (user == null) {
             List<ErrorMessage> errorMessages = new ArrayList<>();
