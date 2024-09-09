@@ -202,6 +202,17 @@ public class ExceptionConveyorHandler {
         );
     }
 
+    @ResponseBody
+    @ExceptionHandler(MessageMailException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleMessageMailException(MessageMailException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Send email error",
+                e.getMessage()
+        );
+    }
+
 
     private ErrorResponse createResponseException(HttpStatus status, String error, String message) {
         return new ErrorResponse(

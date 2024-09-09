@@ -1,5 +1,6 @@
 package com.film.blue_rabb.service.Impl;
 
+import com.film.blue_rabb.exception.custom.MessageMailException;
 import com.film.blue_rabb.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,26 +35,33 @@ public class MailServiceImpl implements MailService {
     private String protocol;
 
     @Override
-    public void sendActiveCode(String email, String code) throws MessagingException {
+    public void sendActiveCode(String email, String code) throws MessagingException, MessageMailException {
         log.trace("MailServiceImpl.sendActiveCode - email {}, code {}", email, code);
-
+        // Установка темы письма
         String subject = "Активация аккаунта";
+
+        // Создаем объект Context для Thymeleaf шаблонизатора и добавляем переменную "code"
         Context context = new Context();
         context.setVariable("code", code);
 
+        // Создаем MIME сообщение с помощью JavaMailSender
         MimeMessage mimeMessage = mailSender.createMimeMessage();
+        // Используем MimeMessageHelper для настройки сообщения
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         mimeMessageHelper.setFrom(username);
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject(subject);
+
+        // Генерируем HTML контент письма на основе шаблона "ActivationCode" и переданного контекста
         String htmlContent = templateEngine.process("ActivationCode", context);
         mimeMessageHelper.setText(htmlContent, true);
 
         try {
+            // Отправляем письмо
             mailSender.send(mimeMessage);
         } catch (Exception e) {
-            log.trace("ERROR - MailServiceImpl.sendActiveCode");
-            throw e;
+            log.error("ERROR - MailServiceImpl.sendActiveCode");
+            throw new MessageMailException();
         }
     }
 }

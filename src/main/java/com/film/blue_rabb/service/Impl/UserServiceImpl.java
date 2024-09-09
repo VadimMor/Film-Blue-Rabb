@@ -107,13 +107,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public RegistrationUserResponse createUser(RegistrationUserRequest registrationUserRequest) throws UserAlreadyCreatedException, MessagingException {
         log.trace("UserServiceImpl.createUser - registrationUserRequest {}", registrationUserRequest);
-
+        // Ищем пользователя в базе данных по email и логину
         Users user = userRepository.findFirstByEmail(registrationUserRequest.email(), registrationUserRequest.login());
 
+        // Если пользователь уже существует, выбрасываем исключение UserAlreadyCreatedException
         if (user != null) {
             throw new UserAlreadyCreatedException();
         }
 
+        // Создаем нового пользователя с данными из запроса
         Users newUser = new Users(
                 registrationUserRequest.login(),
                 registrationUserRequest.email(),
@@ -126,13 +128,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 OffsetDateTime.now()
         );
 
-//        mailService.sendActiveCode(
-//                newUser.getEmail(),
-//                newUser.getActiveCode()
-//        );
+        // Отправляем письмо с кодом активации на email нового пользователя
+        mailService.sendActiveCode(
+                newUser.getEmail(),
+                newUser.getActiveCode()
+        );
 
+        // Сохраняем нового пользователя в базе данных и обновляем состояние
         userRepository.saveAndFlush(newUser);
 
+        // Возвращаем ответ с логином и email нового пользователя
         return new RegistrationUserResponse(
                 newUser.getLogin(),
                 newUser.getEmail()
