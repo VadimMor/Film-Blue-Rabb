@@ -25,4 +25,11 @@ public interface UserService {
      */
     RegistrationUserResponse createUser(RegistrationUserRequest registrationUserRequest) throws MessagingException;
 
+    /**
+     * Метод активации аккаунта
+     * @param code код активации
+     * @param email почта для поиска аккаунта
+     * @return данные о успешной регистрации
+     */
+    RegistrationUserResponse activeUser(String code, String email);
 }

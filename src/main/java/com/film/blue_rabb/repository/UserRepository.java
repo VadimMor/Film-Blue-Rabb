@@ -10,7 +10,11 @@ public interface UserRepository extends JpaRepository<Users, Long> {
     @Query("SELECT u FROM Users u " +
             "WHERE u.email = :email " +
             "OR u.login = :login")
-    Users findFirstByEmail(String email, String login);
+    Users findFirstByEmailOrLogin(String email, String login);
+
+    @Query("SELECT u FROM Users u " +
+            "WHERE u.email = :email")
+    Users findFirstByEmail(String email);
 }
 
 

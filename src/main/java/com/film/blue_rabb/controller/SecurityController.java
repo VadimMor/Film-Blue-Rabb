@@ -37,7 +37,7 @@ public class SecurityController {
     )
     @PostMapping("/auth")
     public ResponseEntity<AuthResponse> createAuthToken(@Parameter(description = "Форма авторизации") @Valid @RequestBody AuthForm authForm) {
-        log.trace("SecurityController.createAuthToken /api/security/auth - authForm {}", authForm);
+        log.trace("SecurityController.createAuthToken - POST /api/security/auth - authForm {}", authForm);
         // Аутентификация переданный объект
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authForm.login(), authForm.password()));
         // Аутентификация и проверка пользователя
@@ -48,12 +48,26 @@ public class SecurityController {
 
     @Operation(
             summary = "Регистрация пользователя",
-            description = "Позволяет зарегестрировать пользователя и сохранить в бд"
+            description = "Позволяет зарегестрировать аккаунт и сохранить в бд"
     )
     @PostMapping("/reg")
     public ResponseEntity<RegistrationUserResponse> createUser(@Parameter(description = "Информация для регистрации") @Valid @RequestBody RegistrationUserRequest registrationUserRequest) throws MessagingException {
-        log.trace("SecurityController.createUser /api/security/reg - registrationUserRequest {}", registrationUserRequest);
+        log.trace("SecurityController.createUser - POST /api/security/reg - registrationUserRequest {}", registrationUserRequest);
         RegistrationUserResponse response = userService.createUser(registrationUserRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "Активация аккаунта",
+            description = "Позволяет активировать аккаунт для дальнейшей работы"
+    )
+    @PutMapping("/reg")
+    public ResponseEntity<RegistrationUserResponse> activeUser(
+            @Parameter(description = "код для активации") @RequestParam String code,
+            @Parameter(description = "почта для поиска аккаунта") @RequestParam String email
+    ) {
+        log.trace("SecurityController.activeUser - PUT /api/security/reg - code {}, email {}", code, email);
+        RegistrationUserResponse response = userService.activeUser(code, email);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }
