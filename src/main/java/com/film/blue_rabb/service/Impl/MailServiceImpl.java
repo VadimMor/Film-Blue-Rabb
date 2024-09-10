@@ -43,6 +43,7 @@ public class MailServiceImpl implements MailService {
         // Создаем объект Context для Thymeleaf шаблонизатора и добавляем переменную "code"
         Context context = new Context();
         context.setVariable("code", code);
+        context.setVariable("email", email);
 
         // Создаем MIME сообщение с помощью JavaMailSender
         MimeMessage mimeMessage = mailSender.createMimeMessage();
