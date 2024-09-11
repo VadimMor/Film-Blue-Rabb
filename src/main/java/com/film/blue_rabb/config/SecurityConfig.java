@@ -90,14 +90,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/place").hasAuthority(RoleEnum.ORGANIZATION.getAuthority())
-                        .requestMatchers(HttpMethod.POST,"/place/hall").hasAuthority(RoleEnum.ORGANIZATION.getAuthority())
-                        .requestMatchers(HttpMethod.POST,"/event").hasAuthority(RoleEnum.ORGANIZATION.getAuthority())
-                        .requestMatchers(HttpMethod.POST,"/session").hasAuthority(RoleEnum.ORGANIZATION.getAuthority())
-                        .requestMatchers("/client**").hasAuthority(RoleEnum.CLIENT.getAuthority())
-                        .requestMatchers("/organization**").hasAuthority(RoleEnum.ORGANIZATION.getAuthority())
-                        .requestMatchers(HttpMethod.POST, "/security/organization").hasAuthority(RoleEnum.ADMIN.getAuthority())
-                        .requestMatchers("/error").permitAll() // Allow access to error endpoint
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
