@@ -1,19 +1,16 @@
 package com.film.blue_rabb.enums;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
 @RequiredArgsConstructor
-public enum StatusEnum implements GrantedAuthority {
+public enum StatusEnum {
     ACTIVE("ACTIVE"),
-    INACTIVE("INACTIVE"),
-    BANNEDTIME("BANNED_TIME"),
-    BANNED("BANNED");
+    BANNED("BANNED"),
+    INACTIVE("INACTIVE");
 
     private final String value;
 
-    @Override
-    public String getAuthority() {
+    public String getStatusUser() {
         return value;
     }
 }
