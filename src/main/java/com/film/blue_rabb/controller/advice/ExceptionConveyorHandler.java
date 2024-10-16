@@ -1,7 +1,10 @@
 package com.film.blue_rabb.controller.advice;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.film.blue_rabb.exception.ErrorResponse;
+import com.film.blue_rabb.exception.custom.TypeFileError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityExistsException;
@@ -121,6 +124,41 @@ public class ExceptionConveyorHandler {
                 "Invalid JWT signature",
                 "The JWT token's signature is not valid"
         );
+    }
+
+    @ExceptionHandler(TypeFileError.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleFileTypeException(TypeFileError ex) {
+        String errorMessage = ex.getErrorMessage().stream()
+                .map(error -> error.fieldName() + ": " + error.message())
+                .collect(Collectors.joining(", "));
+
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "File error",
+                errorMessage
+        );
+    }
+
+    @ExceptionHandler(JsonParseException.class)
+    public ResponseEntity<String> handleJsonParseException(JsonParseException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Ошибка разбора JSON: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(JsonMappingException.class)
+    public ResponseEntity<String> handleJsonMappingException(JsonMappingException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Ошибка сопоставления JSON: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Произошла ошибка: " + ex.getMessage());
     }
 
 

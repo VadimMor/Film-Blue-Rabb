@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     public void checkToken(String token) {
        log.trace("UserServiceImpl.checkToken - token {}", token);
 
-
+        
     }
 
 

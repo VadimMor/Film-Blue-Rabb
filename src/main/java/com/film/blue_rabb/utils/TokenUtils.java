@@ -25,8 +25,7 @@ public class TokenUtils {
 
     private final List<String> invalidToken = new ArrayList<>();
 
-    //Шифрование секретного ключа
-    private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    private SecretKey key;
 
     /**
      * Создание токена авторизации
@@ -54,7 +53,7 @@ public class TokenUtils {
                 .subject(userDetails.getUsername())
                 .issuedAt(issuedDate)
                 .expiration(expiredDate)
-                .signWith(key)
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -92,9 +91,21 @@ public class TokenUtils {
         }
 
         return Jwts.parser()
-                .setSigningKey(key)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getBody();
     }
+
+    /**
+     * Инициализация ключа
+     * @return зашифрованный ключ
+     */
+    private SecretKey getSigningKey() {
+        if (key == null) {
+            key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        }
+        return key;
+    }
+
 }

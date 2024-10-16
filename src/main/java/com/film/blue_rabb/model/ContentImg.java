@@ -1,12 +1,12 @@
 package com.film.blue_rabb.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,11 +14,12 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.UUID;
 
-@Document(collection = "video")
+@Document(collection = "image")
 @NoArgsConstructor
-public class VideoFile {
+@Getter
+@Setter
+public class ContentImg {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -29,7 +30,7 @@ public class VideoFile {
 
     @Lob
     @NotNull(message = "Video content cannot be null")
-    private byte[] video;
+    private byte[] img;
 
     private String contentType;
 
@@ -41,9 +42,9 @@ public class VideoFile {
     @LastModifiedDate
     private Date updatedDate;
 
-    public VideoFile(String name, @NotNull(message = "Video content cannot be null") byte[] video, String contentType, long size, Date createdDate, Date updatedDate) {
+    public ContentImg(String name, @NotNull(message = "Video content cannot be null") byte[] img, String contentType, long size, Date createdDate, Date updatedDate) {
         this.name = name;
-        this.video = video;
+        this.img = img;
         this.contentType = contentType;
         this.size = size;
         this.createdDate = createdDate;

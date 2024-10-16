@@ -1,9 +1,12 @@
 package com.film.blue_rabb.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ContentVideo;
+import com.film.blue_rabb.service.ContentImgService;
 import com.film.blue_rabb.service.ContentService;
+import com.film.blue_rabb.utils.ConvertUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,8 +15,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api/video")
@@ -23,18 +31,25 @@ import org.springframework.web.multipart.MultipartFile;
 public class ContentController {
     private final ContentService contentService;
 
+    private final ConvertUtils convertToJSON;
+
     @Operation(
             summary = "Метод создания информации о контенте киноискусства",
             description = "Позволяет создать и сохранить информацию о контенте киноискусства"
     )
     @PostMapping
+    @Validated
     public ResponseEntity<AddContentResponse> postContent(
-            @Parameter(description = "Информация о контенте киноискусства") @Valid @RequestPart AddContentRequest addContentRequest,
-            @Parameter(description = "Изображения контента") @RequestPart("file") MultipartFile[] multipartFiles,
-            @Parameter(description = "токен доступа") @RequestHeader("Authorization") String token
-    ) {
-            log.trace("ContentController.postContent - POST '/api/video' - contentVideo {}, token {}", addContentRequest, token);
-            AddContentResponse addContentResponse = contentService.addContent(addContentRequest, multipartFiles, token);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
+            @Parameter(description = "Информация о контенте киноискусства")
+            @Valid @RequestPart(name = "add_content_request") String addContentRequestJson,
+            @Parameter(description = "Изображения контента")
+            @RequestPart("file") MultipartFile[] multipartFiles
+    ) throws IOException, MethodArgumentNotValidException {
+        log.trace("ContentController.postContent - POST '/api/video' - contentVideo {}, count files {}", addContentRequestJson, multipartFiles.length);
+
+        AddContentRequest addContentRequest = convertToJSON.convertToJSONContentRequest(addContentRequestJson);
+
+        AddContentResponse addContentResponse = contentService.addContent(addContentRequest, multipartFiles);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
     }
 }

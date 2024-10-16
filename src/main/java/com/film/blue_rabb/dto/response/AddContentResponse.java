@@ -7,12 +7,6 @@ public record AddContentResponse(
         String nameContent,
 
         @JsonProperty("message")
-        String message,
-
-        @JsonProperty("user_id")
-        Long userId,
-
-        @JsonProperty("userEmail")
-        String email
+        String message
 ) {
 }

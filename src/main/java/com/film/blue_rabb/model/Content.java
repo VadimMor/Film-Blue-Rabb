@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -22,34 +24,43 @@ public class Content {
     @Column(name = "name_eng")
     private String nameEng;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+    @Column(name = "symbolic_name")
+    private String symbolicName;
 
-    @Column(name = "duration")
-    private Integer duration;
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @Column(name = "age")
     private byte age;
 
     @Column(name = "creator")
-    private char creator;
+    private String creator;
 
     @Column(name = "average_duration")
     private Integer averageDuration;
 
-    @OneToMany
-    @Column(name = "movie_video_id")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "content_images", joinColumns = @JoinColumn(name = "content_id"))
+    @Column(name = "image_id")
+    private Set<String> imageSet;
+
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "content_id")
     private List<Video> videos;
 
-    public Content(String nameRus, String nameEng, String description, Integer duration, byte age, char creator, Integer averageDuration, List<Video> videos) {
+    public Content(String nameRus, String nameEng, String symbolicName, String description, byte age, String creator, Integer averageDuration, List<Video> videos) {
         this.nameRus = nameRus;
         this.nameEng = nameEng;
+        this.symbolicName = symbolicName;
         this.description = description;
-        this.duration = duration;
         this.age = age;
         this.creator = creator;
         this.averageDuration = averageDuration;
         this.videos = videos;
+    }
+
+    public void addImage(String image) {
+        if (imageSet == null) imageSet = new HashSet<>();
+        if (image != null) this.imageSet.add(image);
     }
 }
