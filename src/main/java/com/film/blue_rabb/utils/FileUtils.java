@@ -18,7 +18,7 @@ public class FileUtils {
      */
     public static void checkTypeImage(byte[] bytes, String contentType) throws TypeFileError {
         log.trace("FileUtils.checkTypeImage - Checking file type with contentType: {}", contentType);
-        System.out.println(contentType);
+
         // Проверяем тип содержимого
         if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
             log.warn("Invalid content type detected: {}", contentType);

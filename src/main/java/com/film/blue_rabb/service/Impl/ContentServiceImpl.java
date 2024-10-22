@@ -57,9 +57,8 @@ public class ContentServiceImpl implements ContentService {
                     addContentRequest.durationMinutes(),
                     null
             );
-            System.out.println(content);
+
             for (MultipartFile file : files) {
-                System.out.println(file.getOriginalFilename());
                 String savedImage = contentImgService.saveContentImg(file);
                 savedImages.add(savedImage);
                 content.addImage(savedImage);
