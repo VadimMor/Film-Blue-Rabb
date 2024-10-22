@@ -1,16 +1,18 @@
 package com.film.blue_rabb.controller.advice;
 
-import com.film.blue_rabb.exception.*;
-import com.film.blue_rabb.exception.custom.*;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.film.blue_rabb.exception.ErrorResponse;
+import com.film.blue_rabb.exception.custom.TypeFileError;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,7 +30,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionConveyorHandler {
+
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,13 +51,6 @@ public class ExceptionConveyorHandler {
                 .collect(Collectors.toList());
 
         return String.join(". ", errors);
-    }
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidDataException.class)
-    public List<ErrorMessage> onInvalidDataException(InvalidDataException e) {
-        return e.getInvalidFields();
     }
 
     @ResponseBody
@@ -77,12 +74,6 @@ public class ExceptionConveyorHandler {
         return createResponseException(HttpStatus.NOT_FOUND, "Entity not found", ex.getMessage());
     }
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AuthenticationException.class)
-    public ErrorResponse onAuthenticationException(AuthenticationException ex) {
-        return createResponseException(HttpStatus.UNAUTHORIZED, "The email/login or password is incorrect!", ex.getMessage());
-    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -91,39 +82,6 @@ public class ExceptionConveyorHandler {
         return createResponseException(HttpStatus.FORBIDDEN, "Forbidden", e.getMessage());
     }
 
-
-    //new excep handlers
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ElementNotFoundException.class)
-    public ErrorResponse onElementNotFoundException(ElementNotFoundException ex) {
-        String errorMessage = ex.getErrorMessage().stream()
-                .map(error -> error.fieldName() + ": " + error.message())
-                .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.NOT_FOUND, "Element not found", errorMessage);
-    }
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public ErrorResponse onUserNotFoundException(UserNotFoundException ex) {
-        String errorMessage = ex.getErrorMessage().stream()
-                .map(error -> error.fieldName() + ": " + error.message())
-                .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.NOT_FOUND, "User not found", errorMessage);
-    }
-
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AccessDeniedException.class)
-    public ErrorResponse onAccessDeniedException(AccessDeniedException ex) {
-        String errorMessage = ex.getErrorMessage().stream()
-                .map(error -> error.fieldName() + ": " + error.message())
-                .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.UNAUTHORIZED, "Access denied", errorMessage);
-    }
-
-    @ResponseBody
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         ErrorResponse errorResponse = createResponseException(
@@ -135,7 +93,6 @@ public class ExceptionConveyorHandler {
     }
 
 
-    @ResponseBody
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
@@ -159,7 +116,6 @@ public class ExceptionConveyorHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseBody
     @ExceptionHandler(SignatureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleSignatureException(SignatureException ex) {
@@ -170,47 +126,39 @@ public class ExceptionConveyorHandler {
         );
     }
 
-    @ResponseBody
-    @ExceptionHandler(AuthenticationUserException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleAuthenticationException(AuthenticationUserException e) {
-        String errorMessage = e.getErrorMessage().stream()
-                .map(error -> error.message())
+    @ExceptionHandler(TypeFileError.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleFileTypeException(TypeFileError ex) {
+        String errorMessage = ex.getErrorMessage().stream()
+                .map(error -> error.fieldName() + ": " + error.message())
                 .collect(Collectors.joining(", "));
-        return createResponseException(HttpStatus.UNAUTHORIZED, "Authentication error", errorMessage);
-    }
 
-    @ResponseBody
-    @ExceptionHandler(BannedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBannedException(BannedException e) {
         return createResponseException(
                 HttpStatus.BAD_REQUEST,
-                "Access is denied",
-                e.getMessage()
+                "File error",
+                errorMessage
         );
     }
 
-    @ResponseBody
-    @ExceptionHandler(UserAlreadyCreatedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUserAlreadyCreatedException(UserAlreadyCreatedException e) {
-        return createResponseException(
-                HttpStatus.BAD_REQUEST,
-                "Registration error",
-                e.getMessage()
-        );
+    @ExceptionHandler(JsonParseException.class)
+    public ResponseEntity<String> handleJsonParseException(JsonParseException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Ошибка разбора JSON: " + ex.getMessage());
     }
 
-    @ResponseBody
-    @ExceptionHandler(MessageMailException.class)
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    public ErrorResponse handleMessageMailException(MessageMailException e) {
-        return createResponseException(
-                HttpStatus.BAD_REQUEST,
-                "Send email error",
-                e.getMessage()
-        );
+    @ExceptionHandler(JsonMappingException.class)
+    public ResponseEntity<String> handleJsonMappingException(JsonMappingException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Ошибка сопоставления JSON: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Произошла ошибка: " + ex.getMessage());
     }
 
 
