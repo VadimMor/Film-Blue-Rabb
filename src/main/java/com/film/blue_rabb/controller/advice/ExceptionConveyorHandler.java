@@ -1,10 +1,12 @@
 package com.film.blue_rabb.controller.advice;
 
+import org.springframework.security.core.AuthenticationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.film.blue_rabb.exception.ErrorMessage;
 import com.film.blue_rabb.exception.ErrorResponse;
-import com.film.blue_rabb.exception.custom.TypeFileError;
+import com.film.blue_rabb.exception.custom.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityExistsException;
@@ -159,6 +161,93 @@ public class ExceptionConveyorHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Произошла ошибка: " + ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UserAlreadyCreatedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUserAlreadyCreatedException(UserAlreadyCreatedException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Registration error",
+                e.getMessage()
+        );
+    }
+    @ResponseBody
+    @ExceptionHandler(MessageMailException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleMessageMailException(MessageMailException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Send email error",
+                e.getMessage()
+        );
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidDataException.class)
+    public List<ErrorMessage> onInvalidDataException(InvalidDataException e) {
+        return e.getInvalidFields();
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public ErrorResponse onAuthenticationException(AuthenticationException ex) {
+        return createResponseException(HttpStatus.UNAUTHORIZED, "The email/login or password is incorrect!", ex.getMessage());
+    }
+
+    //new excep handlers
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ElementNotFoundException.class)
+    public ErrorResponse onElementNotFoundException(ElementNotFoundException ex) {
+        String errorMessage = ex.getErrorMessage().stream()
+                .map(error -> error.fieldName() + ": " + error.message())
+                .collect(Collectors.joining(", "));
+        return createResponseException(HttpStatus.NOT_FOUND, "Element not found", errorMessage);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public ErrorResponse onUserNotFoundException(UserNotFoundException ex) {
+        String errorMessage = ex.getErrorMessage().stream()
+                .map(error -> error.fieldName() + ": " + error.message())
+                .collect(Collectors.joining(", "));
+        return createResponseException(HttpStatus.NOT_FOUND, "User not found", errorMessage);
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ErrorResponse onAccessDeniedException(AccessDeniedException ex) {
+        String errorMessage = ex.getErrorMessage().stream()
+                .map(error -> error.fieldName() + ": " + error.message())
+                .collect(Collectors.joining(", "));
+        return createResponseException(HttpStatus.UNAUTHORIZED, "Access denied", errorMessage);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AuthenticationUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthenticationException(AuthenticationUserException e) {
+        String errorMessage = e.getErrorMessage().stream()
+                .map(error -> error.message())
+                .collect(Collectors.joining(", "));
+        return createResponseException(HttpStatus.UNAUTHORIZED, "Authentication error", errorMessage);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BannedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBannedException(BannedException e) {
+        return createResponseException(
+                HttpStatus.BAD_REQUEST,
+                "Access is denied",
+                e.getMessage()
+        );
     }
 
 
