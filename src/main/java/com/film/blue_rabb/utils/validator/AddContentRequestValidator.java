@@ -45,7 +45,7 @@ public class AddContentRequestValidator {
     }
 
     private void validateNotBlank(String value, String field, String message, BindingResult bindingResult) {
-        if (value == null || value.isBlank()) {
+        if (value == null || (value instanceof String && ((String) value).isBlank())) {
             bindingResult.rejectValue(field, field + ".empty", message);
         }
     }

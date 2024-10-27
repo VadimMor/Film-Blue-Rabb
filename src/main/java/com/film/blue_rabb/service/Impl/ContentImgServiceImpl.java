@@ -4,21 +4,16 @@ import com.film.blue_rabb.model.ContentImg;
 import com.film.blue_rabb.repository.ContentImgRepository;
 import com.film.blue_rabb.service.ContentImgService;
 import com.film.blue_rabb.utils.FileUtils;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -39,7 +34,13 @@ public class ContentImgServiceImpl implements ContentImgService {
 
         fileUtils.checkTypeImage(file.getBytes(), file.getContentType());
 
-        ContentImg contentImg = new ContentImg(
+        ContentImg contentImg = contentImgRepository.findFirstByImgAndContentType(file.getBytes(), file.getContentType());
+
+        if (contentImg != null) {
+            return contentImg.getId();
+        }
+
+        contentImg = new ContentImg(
                 file.getOriginalFilename(),
                 file.getBytes(),
                 file.getContentType(),
@@ -53,12 +54,28 @@ public class ContentImgServiceImpl implements ContentImgService {
     }
 
     @Override
+    public boolean checkContentImg(MultipartFile file, Set<String> idImgs) throws IOException {
+        log.trace("ContentImgServiceImpl.saveContentImg - file {}, idImgs {}", file.getOriginalFilename(), idImgs);
+
+        fileUtils.checkTypeImage(file.getBytes(), file.getContentType());
+
+        ContentImg contentImg = contentImgRepository.findFirstByImgAndContentType(file.getBytes(), file.getContentType());
+
+        if (contentImg != null && idImgs.contains(contentImg.getId())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public void deleteSavedImages(List<String> savedImages) {
         try {
             contentImgRepository.deleteAllById(savedImages);
             log.info("Deleted {} images from the database", savedImages.size());
         } catch (Exception e) {
             log.error("Failed to delete images. Error: {}", e.getMessage());
+            throw new RuntimeException("Error delete saved images");
         }
     }
 }

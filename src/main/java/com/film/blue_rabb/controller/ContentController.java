@@ -38,7 +38,6 @@ public class ContentController {
             description = "Позволяет создать и сохранить информацию о контенте киноискусства"
     )
     @PostMapping
-    @Validated
     public ResponseEntity<AddContentResponse> postContent(
             @Parameter(description = "Информация о контенте киноискусства")
             @Valid @RequestPart(name = "add_content_request") String addContentRequestJson,
@@ -50,6 +49,26 @@ public class ContentController {
         AddContentRequest addContentRequest = convertToJSON.convertToJSONContentRequest(addContentRequestJson);
 
         AddContentResponse addContentResponse = contentService.addContent(addContentRequest, multipartFiles);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
+    }
+
+    @Operation(
+            summary = "Метод изменения информации о контенте киноискусства",
+            description = "Позволяет изменить и сохранить информацию о контенте киноискусства в базе данных"
+    )
+    @PutMapping
+    public ResponseEntity<AddContentResponse> putContent(
+            @Parameter(description = "Информация о контенте киноискусства")
+            @Valid @RequestPart(name = "add_content_request") String addContentRequestJson,
+            @Parameter(description = "Изображения контента")
+            @RequestPart("file") MultipartFile[] multipartFiles,
+            @RequestParam("symbolic-name") String symbolicName
+    ) throws Exception {
+        log.trace("ContentController.putContent - PUT '/api/video' - contentVideo {}, count files {}, symbolicName {}", addContentRequestJson, multipartFiles.length, symbolicName);
+
+        AddContentRequest addContentRequest = convertToJSON.convertToJSONContentRequest(addContentRequestJson);
+
+        AddContentResponse addContentResponse = contentService.updateContent(addContentRequest, multipartFiles, symbolicName);
         return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
     }
 }

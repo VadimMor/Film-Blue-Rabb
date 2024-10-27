@@ -13,8 +13,16 @@ public interface ContentService {
      * Метод добавления контента киноиндустрии
      * @param addContentRequest информацияи о контенте
      * @param files изображения контента
-//     * @param token токен авторизации
      * @return сообщение об успешном создании контента
      */
     public AddContentResponse addContent(AddContentRequest addContentRequest, MultipartFile[] files) throws IOException;
+
+    /**
+     * Метод обновления информации контента киноискусства
+     * @param addContentRequest информацияи о контенте
+     * @param multipartFiles изображения контента
+     * @param symbolicName символичное имя контента
+     * @return сообщение об успешном обновлении контента
+     */
+    AddContentResponse updateContent(AddContentRequest addContentRequest, MultipartFile[] multipartFiles, String symbolicName) throws Exception;
 }

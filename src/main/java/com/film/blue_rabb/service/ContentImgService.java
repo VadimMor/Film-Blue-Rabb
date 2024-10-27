@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface ContentImgService {
@@ -13,6 +14,8 @@ public interface ContentImgService {
      * @param file изображение
      */
     String saveContentImg(MultipartFile file) throws IOException;
+
+    boolean checkContentImg(MultipartFile file, Set<String> idImgs) throws IOException;
 
     void deleteSavedImages(List<String> savedImages);
 }
