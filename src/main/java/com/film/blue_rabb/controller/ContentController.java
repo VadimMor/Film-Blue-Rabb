@@ -1,10 +1,10 @@
 package com.film.blue_rabb.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.film.blue_rabb.dto.request.AddContentRequest;
+import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
-import com.film.blue_rabb.dto.response.ContentVideo;
-import com.film.blue_rabb.service.ContentImgService;
+import com.film.blue_rabb.dto.response.ContentResponse;
 import com.film.blue_rabb.service.ContentService;
 import com.film.blue_rabb.utils.ConvertUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,6 +67,41 @@ public class ContentController {
         AddContentRequest addContentRequest = convertToJSON.convertToJSONContentRequest(addContentRequestJson);
 
         AddContentResponse addContentResponse = contentService.updateContent(addContentRequest, multipartFiles, symbolicName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
+    }
+
+    @Operation(
+            summary = "Метод получения информации о контенте киноискусства",
+            description = "Позволяет посмотреть информацию о контенте киноискусства из бд"
+    )
+    @GetMapping
+    public ResponseEntity<ContentResponse> getContent(
+            @Parameter(description = "Символичное название киноискусства")
+            @RequestParam("symbolic-name") String symbolicName
+    ) {
+        log.trace("ContentController.getContent - GET '/api/video' - symbolicName {}", symbolicName);
+        ContentResponse contentResponse = contentService.getContent(symbolicName);
+        return ResponseEntity.ok(contentResponse);
+    }
+
+    @Operation(
+            summary = "Метод загрузки видео и информации о видео",
+            description = "Позволяет загрузить видео файл и информацию о нем в бд"
+    )
+    @PostMapping("/media")
+    public ResponseEntity<AddContentResponse> postVideo(
+            @Parameter(description = "Файл видео")
+            @RequestPart MultipartFile file,
+            @Parameter(description = "Данные о видео")
+            @RequestPart String addContentRequestString,
+            @Parameter(description = "Символичное название киноискусства")
+            @RequestParam("symbolic-name") String symbolicName
+    ) throws JsonProcessingException, MethodArgumentNotValidException {
+        log.trace("ContentController.postVideo - GET '/api/video/media' - file {}, addContentRequestString {}, symbolicName {}", file.getOriginalFilename(), addContentRequestString, symbolicName);
+
+        AddVideoRequest addVideoRequest = convertToJSON.convertToJSONVideoRequest(addContentRequestString);
+
+        AddContentResponse addContentResponse = contentService.addVideo(file, addVideoRequest, symbolicName);
         return ResponseEntity.status(HttpStatus.CREATED).body(addContentResponse);
     }
 }

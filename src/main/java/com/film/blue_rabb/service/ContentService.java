@@ -1,7 +1,9 @@
 package com.film.blue_rabb.service;
 
 import com.film.blue_rabb.dto.request.AddContentRequest;
+import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
+import com.film.blue_rabb.dto.response.ContentResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,4 +27,20 @@ public interface ContentService {
      * @return сообщение об успешном обновлении контента
      */
     AddContentResponse updateContent(AddContentRequest addContentRequest, MultipartFile[] multipartFiles, String symbolicName) throws Exception;
+
+    /**
+     * Метод посмотреть информацию о контенте киноискусства из бд
+     * @param symbolicName символичное название киноискусства
+     * @return информация киноискусства
+     */
+    ContentResponse getContent(String symbolicName);
+
+    /**
+     * Метод добавления видео и информации о нем в бд
+     * @param file файл видео
+     * @param addVideoRequest информация о видео
+     * @param symbolicName символичное названия контента
+     * @return информация о успешном сохранении
+     */
+    AddContentResponse addVideo(MultipartFile file, AddVideoRequest addVideoRequest, String symbolicName) throws IOException;
 }

@@ -1,11 +1,9 @@
 package com.film.blue_rabb.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -18,6 +16,7 @@ import java.util.UUID;
 
 @Document(collection = "video")
 @NoArgsConstructor
+@Getter
 public class VideoFile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,9 +35,11 @@ public class VideoFile {
     private long size; // Размер файла в байтах
 
     @CreatedDate
+    @Column(name = "create_date")
     private Date createdDate;
 
     @LastModifiedDate
+    @Column(name = "update_date")
     private Date updatedDate;
 
     public VideoFile(String name, @NotNull(message = "Video content cannot be null") byte[] video, String contentType, long size, Date createdDate, Date updatedDate) {

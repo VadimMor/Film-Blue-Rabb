@@ -1,14 +1,18 @@
 package com.film.blue_rabb.service.Impl;
 
 import com.film.blue_rabb.dto.request.AddContentRequest;
+import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
+import com.film.blue_rabb.dto.response.ContentResponse;
 import com.film.blue_rabb.exception.ErrorMessage;
 import com.film.blue_rabb.exception.custom.InvalidDataException;
 import com.film.blue_rabb.model.Content;
+import com.film.blue_rabb.model.Video;
 import com.film.blue_rabb.repository.ContentRepository;
 import com.film.blue_rabb.service.ContentImgService;
 import com.film.blue_rabb.service.ContentService;
 import com.film.blue_rabb.service.UserService;
+import com.film.blue_rabb.service.VideoService;
 import com.film.blue_rabb.utils.ConvertUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class ContentServiceImpl implements ContentService {
     private final UserService userService;
     private final ContentImgService contentImgService;
+    private final VideoService videoService;
 
     private final ContentRepository contentRepository;
 
@@ -61,6 +63,8 @@ public class ContentServiceImpl implements ContentService {
                     addContentRequest.age(),
                     addContentRequest.creator(),
                     addContentRequest.durationMinutes(),
+                    new Date(),
+                    new Date(),
                     null
             );
 
@@ -142,6 +146,88 @@ public class ContentServiceImpl implements ContentService {
         } catch (Exception e) {
             log.error("An unexpected error occurred: {}", e.getMessage());
             throw new RuntimeException("An unexpected error occurred while updating content.", e);
+        }
+    }
+
+    /**
+     * Метод посмотреть информацию о контенте киноискусства из бд
+     * @param symbolicName символичное название киноискусства
+     * @return информация киноискусства
+     */
+    @Override
+    public ContentResponse getContent(String symbolicName) throws EntityNotFoundException {
+        log.trace("ContentServiceImpl.getContent - symbolicName {}", symbolicName);
+
+        Content content = contentRepository.findFirstBySymbolicName(symbolicName);
+
+        if (content == null) {
+            throw new EntityNotFoundException("Cinematography content is missing from the database");
+        }
+
+        return new ContentResponse(
+                content.getNameRus(),
+                content.getNameEng(),
+                content.getDescription(),
+                content.getSymbolicName(),
+                content.getImageSet().iterator().next(),
+                content.getImageSet().toArray(new String[0]),
+                false,
+                convertUtils.formatDurationWithCases(content.getAverageDuration()),
+                (int) content.getAge(),
+                null,
+                content.getCreator(),
+                content.getVideos().stream()
+                        .map(Video::getId)
+                        .toArray(String[]::new)
+        );
+    }
+
+    /**
+     * Метод добавления видео и информации о нем в бд
+     * @param file файл видео
+     * @param addVideoRequest информация о видео
+     * @param symbolicName символичное названия контента
+     * @return информация о успешном сохранении
+     */
+    @Override
+    public AddContentResponse addVideo(MultipartFile file, AddVideoRequest addVideoRequest, String symbolicName) throws EntityNotFoundException, IOException {
+        log.trace("ContentServiceImpl.addVideo - file {}, addVideoRequest {}, symbolicName {}", file.getOriginalFilename(), addVideoRequest, symbolicName);
+
+        // Поиск информации киноискусства
+        Content content = contentRepository.findFirstBySymbolicName(symbolicName);
+
+        // Проверка на наличие информации и киноискусстве
+        if (content == null) {
+            log.error("Content with symbolic name '{}' not found.", symbolicName);
+            throw new EntityNotFoundException("Error symbolic name!");
+        }
+
+        try {
+            Video newVideo = videoService.addVideo(file, addVideoRequest);
+
+            // Проверка на наличие видео в списке
+            if (!content.getVideos().contains(newVideo)) {
+                content.getVideos().add(newVideo); // Добавляем видео в список
+                contentRepository.save(content); // Сохраняем изменения
+                log.info("Video '{}' added to content '{}'.", newVideo.getFullName(), content.getNameRus());
+
+                return new AddContentResponse(
+                        content.getNameRus(),
+                        String.format("Video added by %s", content.getNameRus())
+                );
+            } else {
+                log.warn("Video '{}' already exists in content '{}'.", newVideo.getFullName(), content.getNameRus());
+                return new AddContentResponse(
+                        content.getNameRus(),
+                        String.format("Video '%s' already exists.", newVideo.getFullName())
+                );
+            }
+        } catch (IOException e) {
+            log.error("IOException occurred while saving content: {}", e.getMessage());
+            throw new IOException("Failed to save content due to IO error.", e);
+        } catch (Exception e) {
+            log.error("An unexpected error occurred: {}", e.getMessage());
+            throw new RuntimeException("An unexpected error occurred while adding content.", e);
         }
     }
 }
