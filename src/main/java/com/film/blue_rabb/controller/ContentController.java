@@ -96,7 +96,7 @@ public class ContentController {
             @RequestPart String addContentRequestString,
             @Parameter(description = "Символичное название киноискусства")
             @RequestParam("symbolic-name") String symbolicName
-    ) throws JsonProcessingException, MethodArgumentNotValidException {
+    ) throws IOException, MethodArgumentNotValidException {
         log.trace("ContentController.postVideo - GET '/api/video/media' - file {}, addContentRequestString {}, symbolicName {}", file.getOriginalFilename(), addContentRequestString, symbolicName);
 
         AddVideoRequest addVideoRequest = convertToJSON.convertToJSONVideoRequest(addContentRequestString);
