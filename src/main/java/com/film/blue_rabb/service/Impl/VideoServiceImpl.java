@@ -1,12 +1,14 @@
 package com.film.blue_rabb.service.Impl;
 
 import com.film.blue_rabb.dto.request.AddVideoRequest;
+import com.film.blue_rabb.dto.response.VideoResponse;
 import com.film.blue_rabb.model.Video;
 import com.film.blue_rabb.repository.VideoRepository;
 import com.film.blue_rabb.service.VideoFileService;
 import com.film.blue_rabb.service.VideoService;
 import com.film.blue_rabb.utils.ConvertUtils;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,30 @@ public class VideoServiceImpl implements VideoService {
         } catch (IOException e) {
             log.error("IOException occurred while saving content: {}", e.getMessage());
             throw new IOException("Failed to save content due to IO error.", e);
+        } catch (Exception e) {
+            log.error("An unexpected error occurred: {}", e.getMessage());
+            throw new RuntimeException("An unexpected error occurred while adding content.", e);
+        }
+    }
+
+    /**
+     * Метод получения информации о видео
+     * @param id id видео
+     * @return информация о видео
+     */
+    @Override
+    public VideoResponse getVideo(Long id) throws EntityNotFoundException {
+        log.trace("VideoServiceImpl.getVideo - id {}", id);
+
+        try {
+            Video video = videoRepository.getReferenceById(id);
+
+            return new VideoResponse(
+                    video.getFullName(),
+                    video.getShortName(),
+                    video.getDescription(),
+                    video.getDurationMinutes()
+            );
         } catch (Exception e) {
             log.error("An unexpected error occurred: {}", e.getMessage());
             throw new RuntimeException("An unexpected error occurred while adding content.", e);
