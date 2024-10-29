@@ -3,6 +3,7 @@ package com.film.blue_rabb.service.Impl;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.VideoResponse;
 import com.film.blue_rabb.model.Video;
+import com.film.blue_rabb.model.VideoFile;
 import com.film.blue_rabb.repository.VideoRepository;
 import com.film.blue_rabb.service.VideoFileService;
 import com.film.blue_rabb.service.VideoService;
@@ -11,11 +12,14 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,9 @@ public class VideoServiceImpl implements VideoService {
     private final VideoFileService videoFileService;
 
     private final ConvertUtils convertUtils;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     /**
      * Метод добавления видео и информации о нем в бд
@@ -86,5 +93,18 @@ public class VideoServiceImpl implements VideoService {
             log.error("An unexpected error occurred: {}", e.getMessage());
             throw new RuntimeException("An unexpected error occurred while adding content.", e);
         }
+    }
+
+    @Override
+    public Optional<VideoFile> getVideoFile(Long id) throws EntityNotFoundException {
+        Video video = videoRepository.getReferenceById(id);
+
+        if (video.getIdMongo() == null) {
+            throw new EntityNotFoundException("Video not found");
+        }
+
+        Optional<VideoFile> videoFile = videoFileService.getVideoFile(video.getIdMongo());
+
+        return videoFile;
     }
 }

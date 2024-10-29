@@ -4,6 +4,7 @@ import com.film.blue_rabb.model.VideoFile;
 import com.film.blue_rabb.repository.VideoFileRepository;
 import com.film.blue_rabb.service.VideoFileService;
 import com.film.blue_rabb.utils.FileUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -67,5 +69,18 @@ public class VideoFileServiceImpl implements VideoFileService {
             log.error("Failed to delete video. Error: {}", e.getMessage());
             throw new RuntimeException("Error delete saved video");
         }
+    }
+
+    @Override
+    public Optional<VideoFile> getVideoFile(String idMongo) {
+        log.trace("VideoFileServiceImpl.getVideoFile - idMongo {}", idMongo);
+
+        Optional<VideoFile> videoFile = videoFileRepository.findById(UUID.fromString(idMongo));
+
+        if (videoFile == null) {
+            throw new EntityNotFoundException("Video not found");
+        }
+
+        return videoFile;
     }
 }

@@ -3,10 +3,12 @@ package com.film.blue_rabb.service;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.VideoResponse;
 import com.film.blue_rabb.model.Video;
+import com.film.blue_rabb.model.VideoFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public interface VideoService {
@@ -24,4 +26,6 @@ public interface VideoService {
      * @return информация о видео
      */
     VideoResponse getVideo(Long id);
+
+    Optional<VideoFile> getVideoFile(Long id);
 }
