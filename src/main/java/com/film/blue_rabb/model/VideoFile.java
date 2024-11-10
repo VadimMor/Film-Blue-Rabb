@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Document(collection = "video")
 @NoArgsConstructor
 @Getter
+@Setter
 public class VideoFile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

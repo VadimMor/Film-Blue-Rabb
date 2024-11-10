@@ -53,7 +53,7 @@ public class VideoServiceImpl implements VideoService {
         try {
             videoFile = videoFileService.saveVideoFile(file);
 
-            return new Video(
+            Video video = new Video(
                     addVideoRequest.fullName(),
                     convertUtils.formatName(addVideoRequest.fullName()),
                     addVideoRequest.description(),
@@ -62,6 +62,10 @@ public class VideoServiceImpl implements VideoService {
                     new Date(),
                     new Date()
             );
+
+            videoRepository.saveAndFlush(video);
+
+            return video;
         } catch (IOException e) {
             log.error("IOException occurred while saving content: {}", e.getMessage());
             throw new IOException("Failed to save content due to IO error.", e);

@@ -63,7 +63,7 @@ public class VideoFileServiceImpl implements VideoFileService {
         log.trace("VideoFileServiceImpl.deleteVideoFile - videoFile {}", videoFile);
 
         try {
-            videoFileRepository.deleteById(UUID.fromString(videoFile));
+            videoFileRepository.deleteById(videoFile);
             log.info("Deleted {} video from the database", videoFile);
         } catch (Exception e) {
             log.error("Failed to delete video. Error: {}", e.getMessage());
@@ -75,7 +75,7 @@ public class VideoFileServiceImpl implements VideoFileService {
     public Optional<VideoFile> getVideoFile(String idMongo) {
         log.trace("VideoFileServiceImpl.getVideoFile - idMongo {}", idMongo);
 
-        Optional<VideoFile> videoFile = videoFileRepository.findById(UUID.fromString(idMongo));
+        Optional<VideoFile> videoFile = videoFileRepository.findById(idMongo);
 
         if (videoFile == null) {
             throw new EntityNotFoundException("Video not found");

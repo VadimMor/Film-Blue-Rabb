@@ -24,8 +24,7 @@ public class Video {
     @Column(name = "short_name")
     private String shortName;
 
-    @Lob
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "duration_minutes")
