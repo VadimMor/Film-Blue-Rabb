@@ -9,10 +9,7 @@ import com.film.blue_rabb.exception.custom.InvalidDataException;
 import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.model.Video;
 import com.film.blue_rabb.repository.ContentRepository;
-import com.film.blue_rabb.service.ContentImgService;
-import com.film.blue_rabb.service.ContentService;
-import com.film.blue_rabb.service.UserService;
-import com.film.blue_rabb.service.VideoService;
+import com.film.blue_rabb.service.*;
 import com.film.blue_rabb.utils.ConvertUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,6 +30,7 @@ public class ContentServiceImpl implements ContentService {
     private final UserService userService;
     private final ContentImgService contentImgService;
     private final VideoService videoService;
+    private final PopularService popularService;
 
     private final ContentRepository contentRepository;
 
@@ -65,7 +63,8 @@ public class ContentServiceImpl implements ContentService {
                     addContentRequest.durationMinutes(),
                     new Date(),
                     new Date(),
-                    null
+                    null,
+                    popularService.createPopularTable()
             );
 
             for (MultipartFile file : files) {

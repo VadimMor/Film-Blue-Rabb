@@ -59,7 +59,11 @@ public class Content {
     @JoinColumn(name = "content_id")
     private List<Video> videos;
 
-    public Content(String nameRus, String nameEng, String symbolicName, String description, byte age, String creator, Integer averageDuration, Date createdDate, Date updatedDate, List<Video> videos) {
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "popular_id")
+    private Popular popularTable;
+
+    public Content(String nameRus, String nameEng, String symbolicName, String description, byte age, String creator, Integer averageDuration, Date createdDate, Date updatedDate, List<Video> videos, Popular popularTable) {
         this.nameRus = nameRus;
         this.nameEng = nameEng;
         this.symbolicName = symbolicName;
@@ -70,6 +74,7 @@ public class Content {
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.videos = videos;
+        this.popularTable = popularTable;
     }
 
     public void addImage(String image) {
