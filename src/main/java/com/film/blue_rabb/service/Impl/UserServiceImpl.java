@@ -7,6 +7,7 @@ import com.film.blue_rabb.enums.RoleEnum;
 import com.film.blue_rabb.enums.StatusEnum;
 import com.film.blue_rabb.exception.custom.*;
 import com.film.blue_rabb.utils.ActiveCode;
+import com.film.blue_rabb.utils.ConvertUtils;
 import com.film.blue_rabb.utils.PasswordEncoder;
 import com.film.blue_rabb.utils.TokenUtils;
 import com.film.blue_rabb.dto.response.AuthResponse;
@@ -16,6 +17,7 @@ import com.film.blue_rabb.repository.UserRepository;
 import com.film.blue_rabb.service.*;
 import com.film.blue_rabb.service.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final TokenUtils tokenUtils;
     private final ActiveCode activeCode;
     private final PasswordEncoder passwordEncoder;
+    private final ConvertUtils convertUtils;
 
     /**
      * Метод получения токена авторизации
@@ -180,6 +183,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 user.getLogin(),
                 user.getEmail()
         );
+    }
+
+    /**
+     * Получение пользователя по токену
+     * @param token токен авторизации
+     * @return возвращает авторизированного пользователя
+     */
+    @Override
+    public Users getUserByToken(String token) throws EntityNotFoundException {
+        log.trace("UserServiceImpl.getUserByToken - token {}", token);
+
+        if (token == null) {
+            return null;
+        }
+
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        if (user == null) {
+            List<ErrorMessage> errorMessages = new ArrayList<>();
+            errorMessages.add(new ErrorMessage("JWT error", "Authorization token error"));
+            throw new AuthenticationUserException(errorMessages);
+        }
+
+        return user;
     }
 
     @Override

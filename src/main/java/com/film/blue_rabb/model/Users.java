@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -47,6 +49,10 @@ public class Users {
     @Column(name = "date_creation")
     private OffsetDateTime dateCreation;
 
+    @Column(name = "favorite")
+    @OneToMany
+    private Set<Content> contentSet;
+
     public Users(String login, String email, String password, LocalDate birthday, RoleEnum role, StatusEnum status, String activeCode, OffsetDateTime bannedTime, OffsetDateTime dateCreation) {
         this.login = login;
         this.email = email;
@@ -57,5 +63,10 @@ public class Users {
         this.activeCode = activeCode;
         this.bannedTime = bannedTime;
         this.dateCreation = dateCreation;
+    }
+
+    public void addContent(Content content) {
+        if (contentSet == null) contentSet = new HashSet<>();
+        if (content != null) this.contentSet.add(content);
     }
 }

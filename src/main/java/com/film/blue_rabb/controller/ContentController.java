@@ -80,10 +80,11 @@ public class ContentController {
     @GetMapping
     public ResponseEntity<ContentResponse> getContent(
             @Parameter(description = "Символичное название киноискусства")
-            @RequestParam("symbolic-name") String symbolicName
+            @RequestParam("symbolic-name") String symbolicName,
+            @RequestHeader(value = "Authorization", required = false) String token
     ) {
         log.trace("ContentController.getContent - GET '/api/video' - symbolicName {}", symbolicName);
-        ContentResponse contentResponse = contentService.getContent(symbolicName);
+        ContentResponse contentResponse = contentService.getContent(symbolicName, token);
         return ResponseEntity.ok(contentResponse);
     }
 
@@ -96,7 +97,7 @@ public class ContentController {
             @Parameter(description = "Файл видео")
             @RequestPart MultipartFile file,
             @Parameter(description = "Данные о видео")
-            @RequestPart String addContentRequestString,
+            @RequestPart(value = "add_content_request_string") String addContentRequestString,
             @Parameter(description = "Символичное название киноискусства")
             @RequestParam("symbolic-name") String symbolicName
     ) throws IOException, MethodArgumentNotValidException {

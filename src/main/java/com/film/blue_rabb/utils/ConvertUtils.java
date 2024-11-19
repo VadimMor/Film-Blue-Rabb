@@ -167,4 +167,13 @@ public class ConvertUtils {
             return form5;
         }
     }
+
+    /**
+     * Метод удаления Bearer
+     * @param token токен авторизации
+     * @return строка токена
+     */
+    public static String getStringToken(String token) {
+        return token.replace("Bearer ", "");
+    }
 }

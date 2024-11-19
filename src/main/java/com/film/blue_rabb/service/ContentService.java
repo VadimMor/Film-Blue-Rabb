@@ -30,10 +30,12 @@ public interface ContentService {
 
     /**
      * Метод посмотреть информацию о контенте киноискусства из бд
+     *
      * @param symbolicName символичное название киноискусства
+     * @param token токен авторизации
      * @return информация киноискусства
      */
-    ContentResponse getContent(String symbolicName);
+    ContentResponse getContent(String symbolicName, String token);
 
     /**
      * Метод добавления видео и информации о нем в бд

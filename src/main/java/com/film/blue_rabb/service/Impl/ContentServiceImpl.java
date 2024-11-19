@@ -4,18 +4,17 @@ import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
-import com.film.blue_rabb.exception.ErrorMessage;
-import com.film.blue_rabb.exception.custom.InvalidDataException;
 import com.film.blue_rabb.model.Content;
+import com.film.blue_rabb.model.Users;
 import com.film.blue_rabb.model.Video;
 import com.film.blue_rabb.repository.ContentRepository;
 import com.film.blue_rabb.service.*;
 import com.film.blue_rabb.utils.ConvertUtils;
+import com.film.blue_rabb.utils.TokenUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,12 +149,16 @@ public class ContentServiceImpl implements ContentService {
 
     /**
      * Метод посмотреть информацию о контенте киноискусства из бд
+     *
      * @param symbolicName символичное название киноискусства
+     * @param token
      * @return информация киноискусства
      */
     @Override
-    public ContentResponse getContent(String symbolicName) throws EntityNotFoundException {
+    public ContentResponse getContent(String symbolicName, String token) throws EntityNotFoundException {
         log.trace("ContentServiceImpl.getContent - symbolicName {}", symbolicName);
+
+        Users user = userService.getUserByToken(token);
 
         Content content = contentRepository.findFirstBySymbolicName(symbolicName);
 
@@ -172,7 +175,7 @@ public class ContentServiceImpl implements ContentService {
                 content.getSymbolicName(),
                 content.getImageSet().iterator().next(),
                 content.getImageSet().toArray(new String[0]),
-                false,
+                user != null && user.getContentSet().contains(content),
                 convertUtils.formatDurationWithCases(content.getAverageDuration()),
                 (int) content.getAge(),
                 null,

@@ -4,6 +4,7 @@ import com.film.blue_rabb.dto.request.LoginClientRequest;
 import com.film.blue_rabb.dto.request.RegistrationUserRequest;
 import com.film.blue_rabb.dto.response.AuthResponse;
 import com.film.blue_rabb.dto.response.RegistrationUserResponse;
+import com.film.blue_rabb.model.Users;
 import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,11 @@ public interface UserService {
      * @return данные о успешной регистрации
      */
     RegistrationUserResponse activeUser(String code, String email);
+
+    /**
+     * Получение пользователя по токену
+     * @param token токен авторизации
+     * @return возвращает авторизированного пользователя
+     */
+    Users getUserByToken(String token);
 }
