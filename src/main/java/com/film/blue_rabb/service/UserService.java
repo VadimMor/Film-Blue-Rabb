@@ -3,6 +3,7 @@ package com.film.blue_rabb.service;
 import com.film.blue_rabb.dto.request.LoginClientRequest;
 import com.film.blue_rabb.dto.request.RegistrationUserRequest;
 import com.film.blue_rabb.dto.response.AuthResponse;
+import com.film.blue_rabb.dto.response.MassiveContentResponse;
 import com.film.blue_rabb.dto.response.RegistrationUserResponse;
 import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.model.Users;
@@ -46,4 +47,11 @@ public interface UserService {
      * @param token токен авторизации
      */
     void putFavorite(Content content, String token);
+
+    /**
+     * Метод получения избранного у пользователя
+     * @param token токен авторизации
+     * @return массив информации контента киноискусства
+     */
+    MassiveContentResponse getFavorite(String token);
 }

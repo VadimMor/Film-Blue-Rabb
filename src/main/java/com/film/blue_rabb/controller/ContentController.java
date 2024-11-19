@@ -5,6 +5,7 @@ import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
+import com.film.blue_rabb.dto.response.MassiveContentResponse;
 import com.film.blue_rabb.dto.response.VideoResponse;
 import com.film.blue_rabb.service.ContentService;
 import com.film.blue_rabb.service.UserService;
@@ -32,6 +33,7 @@ import java.io.IOException;
 public class ContentController {
     private final ContentService contentService;
     private final VideoService videoService;
+    private final UserService userService;
 
     private final ConvertUtils convertToJSON;
 
@@ -137,5 +139,18 @@ public class ContentController {
         log.trace("ContentController.putFavorite - PUT '/api/video/favorite' - symbolicName {}, token {}", symbolicName, token);
         contentService.putFavorite(symbolicName, token);
         return ResponseEntity.ok(null);
+    }
+
+    @Operation(
+            summary = "Метод вывода избранного пользователя",
+            description = "Позволяет получить информацию о избранных у пользователя"
+    )
+    @GetMapping("/favorite")
+    public ResponseEntity<MassiveContentResponse> getFavorites(
+            @RequestHeader(value = "Authorization") String token
+    ) {
+        log.trace("ContentController.getFavorites - GET '/api/video/favorite' - token {}", token);
+        MassiveContentResponse massiveContentResponse = userService.getFavorite(token);
+        return ResponseEntity.ok(massiveContentResponse);
     }
 }

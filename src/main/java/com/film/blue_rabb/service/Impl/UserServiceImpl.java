@@ -2,7 +2,7 @@ package com.film.blue_rabb.service.Impl;
 
 import com.film.blue_rabb.dto.request.LoginClientRequest;
 import com.film.blue_rabb.dto.request.RegistrationUserRequest;
-import com.film.blue_rabb.dto.response.RegistrationUserResponse;
+import com.film.blue_rabb.dto.response.*;
 import com.film.blue_rabb.enums.RoleEnum;
 import com.film.blue_rabb.enums.StatusEnum;
 import com.film.blue_rabb.exception.custom.*;
@@ -11,7 +11,6 @@ import com.film.blue_rabb.utils.ActiveCode;
 import com.film.blue_rabb.utils.ConvertUtils;
 import com.film.blue_rabb.utils.PasswordEncoder;
 import com.film.blue_rabb.utils.TokenUtils;
-import com.film.blue_rabb.dto.response.AuthResponse;
 import com.film.blue_rabb.model.Users;
 import com.film.blue_rabb.exception.ErrorMessage;
 import com.film.blue_rabb.repository.UserRepository;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -234,6 +234,36 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.addContent(content);
         userRepository.save(user);
+    }
+
+    /**
+     * Метод получения избранного у пользователя
+     * @param token токен авторизации
+     * @return массив информации контента киноискусства
+     */
+    @Override
+    public MassiveContentResponse getFavorite(String token) {
+        log.trace("UserServiceImpl.getFavorite - token {}", token);
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        List<PublicContentResponse> publicContentResponseList = user.getContentSet()
+                .stream()
+                .map(content -> new PublicContentResponse(
+                        content.getNameRus(),
+                        content.getNameEng(),
+                        content.getDescription(),
+                        content.getSymbolicName(),
+                        content.getImageSet().iterator().next(),
+                        user.getContentSet().contains(content),
+                        convertUtils.formatDurationWithCases(content.getAverageDuration()),
+                        (int) content.getAge()
+                ))
+                .toList();
+
+        return new MassiveContentResponse(publicContentResponseList.toArray(PublicContentResponse[]::new));
     }
 
     @Override
