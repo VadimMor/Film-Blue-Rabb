@@ -27,4 +27,15 @@ public class PopularServiceImpl implements PopularService {
 
         return popular;
     }
+
+    @Override
+    public void updateViews(Popular popularTable) {
+        log.trace("PopularServiceImpl.createPopularTable - id {}", popularTable.getId());
+
+        popularTable.setNumberViews(
+                popularTable.getNumberViews() + 1
+        );
+
+        popularRepository.save(popularTable);
+    }
 }

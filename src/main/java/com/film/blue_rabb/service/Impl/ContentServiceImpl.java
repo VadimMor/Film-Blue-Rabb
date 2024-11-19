@@ -163,6 +163,8 @@ public class ContentServiceImpl implements ContentService {
             throw new EntityNotFoundException("Cinematography content is missing from the database");
         }
 
+        popularService.updateViews(content.getPopularTable());
+
         return new ContentResponse(
                 content.getNameRus(),
                 content.getNameEng(),
@@ -176,7 +178,7 @@ public class ContentServiceImpl implements ContentService {
                 null,
                 content.getCreator(),
                 content.getVideos().stream()
-                        .map(Video::getId)
+                        .map(video -> video.getId().toString())
                         .toArray(String[]::new)
         );
     }

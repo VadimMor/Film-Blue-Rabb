@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PopularService {
     Popular createPopularTable();
+
+    void updateViews(Popular popularTable);
 }
