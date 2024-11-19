@@ -84,7 +84,6 @@ public class ContentController {
     ) {
         log.trace("ContentController.getContent - GET '/api/video' - symbolicName {}", symbolicName);
         ContentResponse contentResponse = contentService.getContent(symbolicName);
-        System.out.println(1);
         return ResponseEntity.ok(contentResponse);
     }
 
