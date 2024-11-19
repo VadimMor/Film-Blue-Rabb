@@ -45,4 +45,11 @@ public interface ContentService {
      * @return информация о успешном сохранении
      */
     AddContentResponse addVideo(MultipartFile file, AddVideoRequest addVideoRequest, String symbolicName) throws IOException;
+
+    /**
+     * Метод добавления/удаления избранного
+     * @param symbolicName символичное имя
+     * @param token токен авторизации
+     */
+    void putFavorite(String symbolicName, String token);
 }

@@ -7,6 +7,7 @@ import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
 import com.film.blue_rabb.dto.response.VideoResponse;
 import com.film.blue_rabb.service.ContentService;
+import com.film.blue_rabb.service.UserService;
 import com.film.blue_rabb.service.VideoService;
 import com.film.blue_rabb.utils.ConvertUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -120,6 +121,21 @@ public class ContentController {
     ) {
         log.trace("ContentController.getVideo - GET '/api/video/media' - id {}", id);
         VideoResponse videoResponse = videoService.getVideo(id);
+        return ResponseEntity.ok(null);
+    }
+
+    @Operation(
+            summary = "Метод изменения избранного",
+            description = "Позволяет добавить/убрать избранный контент киноискусства"
+    )
+    @PutMapping("/favorite")
+    public ResponseEntity<?> putFavorite(
+            @Parameter(description = "Символичное название киноискусства")
+            @RequestParam("symbolic-name") String symbolicName,
+            @RequestHeader(value = "Authorization") String token
+    ) {
+        log.trace("ContentController.putFavorite - PUT '/api/video/favorite' - symbolicName {}, token {}", symbolicName, token);
+        contentService.putFavorite(symbolicName, token);
         return ResponseEntity.ok(null);
     }
 }

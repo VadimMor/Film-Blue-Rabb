@@ -234,4 +234,22 @@ public class ContentServiceImpl implements ContentService {
             throw new RuntimeException("An unexpected error occurred while adding content.", e);
         }
     }
+
+    /**
+     * Метод добавления/удаления избранного
+     * @param symbolicName символичное имя
+     * @param token токен авторизации
+     */
+    @Override
+    public void putFavorite(String symbolicName, String token) {
+        log.trace("ContentServiceImpl.putFavorite - symbolicName {}, token {}", symbolicName, token);
+
+        Content content = contentRepository.findFirstBySymbolicName(symbolicName);
+
+        if (content == null) {
+            throw new EntityNotFoundException("Content not found!");
+        }
+
+        userService.putFavorite(content, token);
+    }
 }

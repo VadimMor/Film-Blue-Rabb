@@ -4,6 +4,7 @@ import com.film.blue_rabb.dto.request.LoginClientRequest;
 import com.film.blue_rabb.dto.request.RegistrationUserRequest;
 import com.film.blue_rabb.dto.response.AuthResponse;
 import com.film.blue_rabb.dto.response.RegistrationUserResponse;
+import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.model.Users;
 import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
@@ -38,4 +39,11 @@ public interface UserService {
      * @return возвращает авторизированного пользователя
      */
     Users getUserByToken(String token);
+
+    /**
+     * Метод добавления/удаления избранного
+     * @param content контент киноискусства
+     * @param token токен авторизации
+     */
+    void putFavorite(Content content, String token);
 }

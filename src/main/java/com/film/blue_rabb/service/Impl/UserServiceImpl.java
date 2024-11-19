@@ -6,6 +6,7 @@ import com.film.blue_rabb.dto.response.RegistrationUserResponse;
 import com.film.blue_rabb.enums.RoleEnum;
 import com.film.blue_rabb.enums.StatusEnum;
 import com.film.blue_rabb.exception.custom.*;
+import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.utils.ActiveCode;
 import com.film.blue_rabb.utils.ConvertUtils;
 import com.film.blue_rabb.utils.PasswordEncoder;
@@ -210,6 +211,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         return user;
+    }
+
+    /**
+     * Метод добавления/удаления избранного
+     * @param content контент киноискусства
+     * @param token токен авторизации
+     */
+    @Override
+    public void putFavorite(Content content, String token) {
+        log.trace("UserServiceImpl.putFavorite - content {}, token {}", content.getId(), token);
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        if (user.getContentSet().contains(content)) {
+            user.getContentSet().remove(content);
+            userRepository.save(user);
+            return;
+        }
+
+        user.addContent(content);
+        userRepository.save(user);
     }
 
     @Override
