@@ -9,7 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ContentRepository extends JpaRepository<Content, Long> {
     Content findByNameRusOrNameEng(String nameRus, String nameEng);
 
-    @Query("SELECT c FROM Content c " +
-            "WHERE c.id = 1")
-    Content findFirstById();
+    Content findFirstBySymbolicName(String symbolicName);
 }

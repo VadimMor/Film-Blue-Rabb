@@ -1,9 +1,8 @@
 package com.film.blue_rabb.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record ContentVideo(
+public record PublicContentResponse(
         @JsonProperty("name_rus")
         String nameRus,
 
@@ -13,11 +12,11 @@ public record ContentVideo(
         @JsonProperty("description")
         String description,
 
+        @JsonProperty("symbolic-name")
+        String symbolicName,
+
         @JsonProperty("main_image")
         String mainImage,
-
-        @JsonProperty("images")
-        String[] images,
 
         @JsonProperty("favourite")
         Boolean favourite,
@@ -26,12 +25,6 @@ public record ContentVideo(
         String duration,
 
         @JsonProperty("age")
-        Integer age,
-
-        @JsonProperty("actors")
-        String[] actors,
-
-        @JsonProperty("creator")
-        String creator
+        Integer age
 ) {
 }

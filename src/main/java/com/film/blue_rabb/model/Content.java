@@ -3,7 +3,10 @@ package com.film.blue_rabb.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +42,14 @@ public class Content {
     @Column(name = "average_duration")
     private Integer averageDuration;
 
+    @CreatedDate
+    @Column(name = "create_date")
+    private Date createdDate;
+
+    @LastModifiedDate
+    @Column(name = "update_date")
+    private Date updatedDate;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "content_images", joinColumns = @JoinColumn(name = "content_id"))
     @Column(name = "image_id")
@@ -48,7 +59,11 @@ public class Content {
     @JoinColumn(name = "content_id")
     private List<Video> videos;
 
-    public Content(String nameRus, String nameEng, String symbolicName, String description, byte age, String creator, Integer averageDuration, List<Video> videos) {
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "popular_id")
+    private Popular popularTable;
+
+    public Content(String nameRus, String nameEng, String symbolicName, String description, byte age, String creator, Integer averageDuration, Date createdDate, Date updatedDate, List<Video> videos, Popular popularTable) {
         this.nameRus = nameRus;
         this.nameEng = nameEng;
         this.symbolicName = symbolicName;
@@ -56,7 +71,10 @@ public class Content {
         this.age = age;
         this.creator = creator;
         this.averageDuration = averageDuration;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
         this.videos = videos;
+        this.popularTable = popularTable;
     }
 
     public void addImage(String image) {

@@ -2,20 +2,22 @@ package com.film.blue_rabb.service.Impl;
 
 import com.film.blue_rabb.dto.request.LoginClientRequest;
 import com.film.blue_rabb.dto.request.RegistrationUserRequest;
-import com.film.blue_rabb.dto.response.RegistrationUserResponse;
+import com.film.blue_rabb.dto.response.*;
 import com.film.blue_rabb.enums.RoleEnum;
 import com.film.blue_rabb.enums.StatusEnum;
 import com.film.blue_rabb.exception.custom.*;
+import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.utils.ActiveCode;
+import com.film.blue_rabb.utils.ConvertUtils;
 import com.film.blue_rabb.utils.PasswordEncoder;
 import com.film.blue_rabb.utils.TokenUtils;
-import com.film.blue_rabb.dto.response.AuthResponse;
 import com.film.blue_rabb.model.Users;
 import com.film.blue_rabb.exception.ErrorMessage;
 import com.film.blue_rabb.repository.UserRepository;
 import com.film.blue_rabb.service.*;
 import com.film.blue_rabb.service.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final TokenUtils tokenUtils;
     private final ActiveCode activeCode;
     private final PasswordEncoder passwordEncoder;
+    private final ConvertUtils convertUtils;
 
     /**
      * Метод получения токена авторизации
@@ -180,6 +184,86 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 user.getLogin(),
                 user.getEmail()
         );
+    }
+
+    /**
+     * Получение пользователя по токену
+     * @param token токен авторизации
+     * @return возвращает авторизированного пользователя
+     */
+    @Override
+    public Users getUserByToken(String token) throws EntityNotFoundException {
+        log.trace("UserServiceImpl.getUserByToken - token {}", token);
+
+        if (token == null) {
+            return null;
+        }
+
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        if (user == null) {
+            List<ErrorMessage> errorMessages = new ArrayList<>();
+            errorMessages.add(new ErrorMessage("JWT error", "Authorization token error"));
+            throw new AuthenticationUserException(errorMessages);
+        }
+
+        return user;
+    }
+
+    /**
+     * Метод добавления/удаления избранного
+     * @param content контент киноискусства
+     * @param token токен авторизации
+     */
+    @Override
+    public void putFavorite(Content content, String token) {
+        log.trace("UserServiceImpl.putFavorite - content {}, token {}", content.getId(), token);
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        if (user.getContentSet().contains(content)) {
+            user.getContentSet().remove(content);
+            userRepository.save(user);
+            return;
+        }
+
+        user.addContent(content);
+        userRepository.save(user);
+    }
+
+    /**
+     * Метод получения избранного у пользователя
+     * @param token токен авторизации
+     * @return массив информации контента киноискусства
+     */
+    @Override
+    public MassiveContentResponse getFavorite(String token) {
+        log.trace("UserServiceImpl.getFavorite - token {}", token);
+        String email = tokenUtils.getLoginFromToken(
+                ConvertUtils.getStringToken(token)
+        );
+        Users user = userRepository.findFirstByEmail(email);
+
+        List<PublicContentResponse> publicContentResponseList = user.getContentSet()
+                .stream()
+                .map(content -> new PublicContentResponse(
+                        content.getNameRus(),
+                        content.getNameEng(),
+                        content.getDescription(),
+                        content.getSymbolicName(),
+                        content.getImageSet().iterator().next(),
+                        user.getContentSet().contains(content),
+                        convertUtils.formatDurationWithCases(content.getAverageDuration()),
+                        (int) content.getAge()
+                ))
+                .toList();
+
+        return new MassiveContentResponse(publicContentResponseList.toArray(PublicContentResponse[]::new));
     }
 
     @Override

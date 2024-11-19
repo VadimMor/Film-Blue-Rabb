@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Repository
-public interface VideoFileRepository extends MongoRepository<VideoFile, UUID> {
-    VideoFile findByName(String name);
+public interface VideoFileRepository extends MongoRepository<VideoFile, String> {
+    VideoFile findFirstByVideoAndContentType(byte[] bytes, String contentType);
 }

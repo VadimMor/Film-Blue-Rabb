@@ -1,6 +1,7 @@
 package com.film.blue_rabb.utils.validator;
 
 import com.film.blue_rabb.dto.request.AddContentRequest;
+import com.film.blue_rabb.dto.request.AddVideoRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -10,19 +11,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.lang.reflect.Method;
 
 @Component
-public class AddContentRequestValidator {
-    public void validate(AddContentRequest request) throws MethodArgumentNotValidException {
-        BindingResult bindingResult = new BeanPropertyBindingResult(request, "AddContentRequest");
+public class AddVideoRequestValidator {
+    public void validate(AddVideoRequest request) throws MethodArgumentNotValidException {
+        BindingResult bindingResult = new BeanPropertyBindingResult(request, "AddVideoRequest");
 
         validateNotBlank(request.fullName(), "fullName", "Full name is mandatory!", bindingResult);
-        validateNotBlank(request.fullNameRus(), "fullNameRus", "Full name rus is mandatory!", bindingResult);
         validateNotBlank(request.description(), "description", "Description is mandatory!", bindingResult);
-
-        if (request.age() < 0) {
-            bindingResult.rejectValue("age", "age.invalid", "Age must be non-negative!");
-        }
-
-        validateNotBlank(request.creator(), "creator", "Creator is mandatory!", bindingResult);
 
         if (request.durationMinutes() == null) {
             bindingResult.rejectValue("durationMinutes", "durationMinutes.null", "Duration minutes is mandatory!");
