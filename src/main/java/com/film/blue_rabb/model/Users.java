@@ -5,9 +5,12 @@ import com.film.blue_rabb.enums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,8 +53,16 @@ public class Users {
     private OffsetDateTime dateCreation;
 
     @Column(name = "favorite")
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Content> contentSet;
+
+    @CreatedDate
+    @Column(name = "create_date")
+    private Date createdDate;
+
+    @LastModifiedDate
+    @Column(name = "update_date")
+    private Date updatedDate;
 
     public Users(String login, String email, String password, LocalDate birthday, RoleEnum role, StatusEnum status, String activeCode, OffsetDateTime bannedTime, OffsetDateTime dateCreation) {
         this.login = login;

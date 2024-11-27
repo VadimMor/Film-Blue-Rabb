@@ -3,10 +3,7 @@ package com.film.blue_rabb.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
-import com.film.blue_rabb.dto.response.AddContentResponse;
-import com.film.blue_rabb.dto.response.ContentResponse;
-import com.film.blue_rabb.dto.response.MassiveContentResponse;
-import com.film.blue_rabb.dto.response.VideoResponse;
+import com.film.blue_rabb.dto.response.*;
 import com.film.blue_rabb.service.ContentService;
 import com.film.blue_rabb.service.UserService;
 import com.film.blue_rabb.service.VideoService;
@@ -92,6 +89,20 @@ public class ContentController {
     }
 
     @Operation(
+            summary = "Метод удаления изображения",
+            description = "Позволяет удалить изображение из бд"
+    )
+    @DeleteMapping
+    public ResponseEntity<PublicMessageInfoResponse> deleteImage(
+            @RequestParam("name") @Parameter(description = "Название изображения") String name,
+            @RequestParam("symbolic-name") @Parameter(description = "Символичное название киноискусства") String symbolicName
+    ) {
+        log.trace("ContentController.deleteImage - DELETE /api/video - name {}, symbolicName", name, symbolicName);
+        PublicMessageInfoResponse publicMessageInfoResponse = contentService.deleteImage(name, symbolicName);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(publicMessageInfoResponse);
+    }
+
+    @Operation(
             summary = "Метод загрузки видео и информации о видео",
             description = "Позволяет загрузить видео файл и информацию о нем в бд"
     )
@@ -131,14 +142,14 @@ public class ContentController {
             description = "Позволяет добавить/убрать избранный контент киноискусства"
     )
     @PutMapping("/favorite")
-    public ResponseEntity<?> putFavorite(
+    public ResponseEntity<ChangingFavoriteResponse> putFavorite(
             @Parameter(description = "Символичное название киноискусства")
             @RequestParam("symbolic-name") String symbolicName,
             @RequestHeader(value = "Authorization") String token
     ) {
         log.trace("ContentController.putFavorite - PUT '/api/video/favorite' - symbolicName {}, token {}", symbolicName, token);
-        contentService.putFavorite(symbolicName, token);
-        return ResponseEntity.ok(null);
+        ChangingFavoriteResponse changingFavoriteResponse = contentService.putFavorite(symbolicName, token);
+        return ResponseEntity.ok(changingFavoriteResponse);
     }
 
     @Operation(
