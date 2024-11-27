@@ -3,6 +3,7 @@ package com.film.blue_rabb.service;
 import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
+import com.film.blue_rabb.dto.response.ChangingFavoriteResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,5 +52,5 @@ public interface ContentService {
      * @param symbolicName символичное имя
      * @param token токен авторизации
      */
-    void putFavorite(String symbolicName, String token);
+    ChangingFavoriteResponse putFavorite(String symbolicName, String token);
 }

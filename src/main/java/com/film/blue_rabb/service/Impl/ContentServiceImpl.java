@@ -3,6 +3,7 @@ package com.film.blue_rabb.service.Impl;
 import com.film.blue_rabb.dto.request.AddContentRequest;
 import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
+import com.film.blue_rabb.dto.response.ChangingFavoriteResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
 import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.model.Users;
@@ -241,7 +242,7 @@ public class ContentServiceImpl implements ContentService {
      * @param token токен авторизации
      */
     @Override
-    public void putFavorite(String symbolicName, String token) {
+    public ChangingFavoriteResponse putFavorite(String symbolicName, String token) {
         log.trace("ContentServiceImpl.putFavorite - symbolicName {}, token {}", symbolicName, token);
 
         Content content = contentRepository.findFirstBySymbolicName(symbolicName);
@@ -250,6 +251,6 @@ public class ContentServiceImpl implements ContentService {
             throw new EntityNotFoundException("Content not found!");
         }
 
-        userService.putFavorite(content, token);
+        return userService.putFavorite(content, token);
     }
 }

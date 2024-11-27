@@ -219,7 +219,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @param token токен авторизации
      */
     @Override
-    public void putFavorite(Content content, String token) {
+    public ChangingFavoriteResponse putFavorite(Content content, String token) {
         log.trace("UserServiceImpl.putFavorite - content {}, token {}", content.getId(), token);
         String email = tokenUtils.getLoginFromToken(
                 ConvertUtils.getStringToken(token)
@@ -229,11 +229,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user.getContentSet().contains(content)) {
             user.getContentSet().remove(content);
             userRepository.save(user);
-            return;
+            return new ChangingFavoriteResponse(false);
         }
 
         user.addContent(content);
         userRepository.save(user);
+        return new ChangingFavoriteResponse(true);
     }
 
     /**
