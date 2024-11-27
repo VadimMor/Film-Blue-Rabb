@@ -5,6 +5,7 @@ import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ChangingFavoriteResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
+import com.film.blue_rabb.dto.response.PublicMessageInfoResponse;
 import com.film.blue_rabb.model.Content;
 import com.film.blue_rabb.model.Users;
 import com.film.blue_rabb.model.Video;
@@ -252,5 +253,31 @@ public class ContentServiceImpl implements ContentService {
         }
 
         return userService.putFavorite(content, token);
+    }
+
+    /**
+     * Метод удаления изображения из бд
+     * @param name id изображения
+     * @param symbolicName символичное имя киноискусства
+     * @return сообщение о удалении
+     */
+    @Override
+    public PublicMessageInfoResponse deleteImage(String name, String symbolicName) throws EntityNotFoundException, RuntimeException {
+        log.trace("ContentServiceImpl.deleteImage - name {}, symbolicName {}", name, symbolicName);
+
+        Content content = contentRepository.findFirstBySymbolicName(symbolicName);
+
+        if (content == null) {
+            throw new EntityNotFoundException("Content not found!");
+        } else if (!content.getImageSet().contains(name)) {
+            throw new RuntimeException("The image does not exist");
+        }
+
+        contentImgService.deleteImage(name);
+
+        content.getImageSet().remove(symbolicName);
+        contentRepository.save(content);
+
+        return new PublicMessageInfoResponse("The images have been deleted");
     }
 }

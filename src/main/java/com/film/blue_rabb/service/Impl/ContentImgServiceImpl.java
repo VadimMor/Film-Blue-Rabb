@@ -1,6 +1,7 @@
 package com.film.blue_rabb.service.Impl;
 
 import com.film.blue_rabb.dto.response.PublicImage;
+import com.film.blue_rabb.dto.response.PublicMessageInfoResponse;
 import com.film.blue_rabb.model.ContentImg;
 import com.film.blue_rabb.repository.ContentImgRepository;
 import com.film.blue_rabb.service.ContentImgService;
@@ -85,6 +86,22 @@ public class ContentImgServiceImpl implements ContentImgService {
         } catch (Exception e) {
             log.error("Failed to delete images. Error: {}", e.getMessage());
             throw new RuntimeException("Error delete saved images");
+        }
+    }
+
+    /**
+     * Метод удаления изображения из бд
+     * @param name название изображения
+     */
+    @Override
+    public void deleteImage(String name) {
+        log.trace("ContentImgServiceImpl.deleteImage - name {}", name);
+        try {
+            contentImgRepository.deleteById(name);
+            log.info("Deleted {} image from the database", name);
+        } catch (Exception e) {
+            log.error("Failed to delete image. Error: {}", e.getMessage());
+            throw new RuntimeException("Error delete saved image");
         }
     }
 

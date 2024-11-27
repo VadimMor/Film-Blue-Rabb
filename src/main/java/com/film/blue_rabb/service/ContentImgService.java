@@ -1,6 +1,7 @@
 package com.film.blue_rabb.service;
 
 import com.film.blue_rabb.dto.response.PublicImage;
+import com.film.blue_rabb.dto.response.PublicMessageInfoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,12 @@ public interface ContentImgService {
      * @param savedImages список id сохраненных изображений
      */
     void deleteSavedImages(List<String> savedImages);
+
+    /**
+     * Метод удаления изображения из бд
+     * @param name название изображения
+     */
+    void deleteImage(String name);
 
     /**
      * Метод получения данных для вывода изображения

@@ -89,6 +89,20 @@ public class ContentController {
     }
 
     @Operation(
+            summary = "Метод удаления изображения",
+            description = "Позволяет удалить изображение из бд"
+    )
+    @DeleteMapping
+    public ResponseEntity<PublicMessageInfoResponse> deleteImage(
+            @RequestParam("name") @Parameter(description = "Название изображения") String name,
+            @RequestParam("symbolic-name") @Parameter(description = "Символичное название киноискусства") String symbolicName
+    ) {
+        log.trace("ContentController.deleteImage - DELETE /api/video - name {}, symbolicName", name, symbolicName);
+        PublicMessageInfoResponse publicMessageInfoResponse = contentService.deleteImage(name, symbolicName);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(publicMessageInfoResponse);
+    }
+
+    @Operation(
             summary = "Метод загрузки видео и информации о видео",
             description = "Позволяет загрузить видео файл и информацию о нем в бд"
     )

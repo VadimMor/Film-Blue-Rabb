@@ -1,6 +1,7 @@
 package com.film.blue_rabb.controller;
 
 import com.film.blue_rabb.dto.response.PublicImage;
+import com.film.blue_rabb.dto.response.PublicMessageInfoResponse;
 import com.film.blue_rabb.model.VideoFile;
 import com.film.blue_rabb.service.ContentImgService;
 import com.film.blue_rabb.service.VideoService;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.imageio.ImageIO;
@@ -50,7 +48,7 @@ public class MediaController {
             @RequestParam("h") Integer height,
             HttpServletResponse response
     ) throws IOException {
-        log.trace("MediaController.getImage - GET /api/media, name {}, width {}, height {}", name, width, height);
+        log.trace("MediaController.getImage - GET /api/media - name {}, width {}, height {}", name, width, height);
         PublicImage publicImage = contentImgService.getImage(name);
 
         response.setContentType(publicImage.type());
@@ -89,7 +87,7 @@ public class MediaController {
             @RequestParam Long id,
             HttpServletRequest request
     ) {
-        log.trace("MediaController.getImage - GET /api/media/video, id {}", id);
+        log.trace("MediaController.getImage - GET /api/media/video - id {}", id);
 
         // Получение объекта VideoFile из сервиса по идентификатору
         Optional<VideoFile> videoFileOpt = videoService.getVideoFile(id);

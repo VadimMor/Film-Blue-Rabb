@@ -5,6 +5,7 @@ import com.film.blue_rabb.dto.request.AddVideoRequest;
 import com.film.blue_rabb.dto.response.AddContentResponse;
 import com.film.blue_rabb.dto.response.ChangingFavoriteResponse;
 import com.film.blue_rabb.dto.response.ContentResponse;
+import com.film.blue_rabb.dto.response.PublicMessageInfoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,4 +54,12 @@ public interface ContentService {
      * @param token токен авторизации
      */
     ChangingFavoriteResponse putFavorite(String symbolicName, String token);
+
+    /**
+     * Метод удаления изображения из бд
+     * @param name id изображения
+     * @param symbolicName символичное имя киноискусства
+     * @return сообщение о удалении
+     */
+    PublicMessageInfoResponse deleteImage(String name, String symbolicName);
 }
