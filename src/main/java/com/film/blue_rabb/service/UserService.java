@@ -55,4 +55,9 @@ public interface UserService {
      * @return массив информации контента киноискусства
      */
     MassiveContentResponse getFavorite(String token);
+
+    /**
+     * Метод проверки пользователей на подтверждение почты раз в 1 час
+     */
+    void usersVerification();
 }

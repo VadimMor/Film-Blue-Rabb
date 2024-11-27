@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class SecurityController {
 
     private final AuthenticationManager authenticationManager;
 
+    @Async
     @Operation(
             summary = "Аутентификация пользователя",
             description = "Позволяет пройти аутентификацию и получить jwt"
@@ -45,6 +47,7 @@ public class SecurityController {
         return ResponseEntity.ok(authResponse);
     }
 
+    @Async
     @Operation(
             summary = "Регистрация пользователя",
             description = "Позволяет зарегестрировать аккаунт и сохранить в бд"

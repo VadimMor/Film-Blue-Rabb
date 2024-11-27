@@ -29,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -265,6 +262,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .toList();
 
         return new MassiveContentResponse(publicContentResponseList.toArray(PublicContentResponse[]::new));
+    }
+
+    @Override
+    public void usersVerification() {
+        log.trace("UserServiceImpl.usersVerification");
+
+        try {
+            List<Users> users = userRepository.findAllByCreateDate(
+                    OffsetDateTime.now().minusHours(1).withNano(0)
+            );
+
+            if (!users.isEmpty()) {
+                log.trace("Users {} delete", users.size());
+                userRepository.deleteAll(users);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error delete users");
+        }
     }
 
     @Override
