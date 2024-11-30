@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  backend-main:
+    build:
+      context: ./backend/main
+    container_name: backend-main
+    ports:
+      - "8443:8443"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/api/video"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - backend-main
+
+networks:
+  app-network:
+    driver: bridge
