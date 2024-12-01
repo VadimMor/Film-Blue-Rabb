@@ -9,13 +9,14 @@ services:
       - "8443:8443"
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8443/api/video"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     env_file:
       - .env
+    volumes:
+      - ./logs:/app/logs
+    command: >
+      sh -c "java -Dlogging.config=file:/app/logback-spring.xml -jar /app/blue-rabb-0.0.1-snapshot.jar"
+    logging:
+      driver: "none"
 
   frontend:
     build:
@@ -27,6 +28,10 @@ services:
       - app-network
     depends_on:
       - backend-main
+    volumes:
+      - ./logs:/app/logs
+    command: >
+      sh -c "npm run start > /app/logs/frontend.log 2>&1"
 
 networks:
   app-network:
