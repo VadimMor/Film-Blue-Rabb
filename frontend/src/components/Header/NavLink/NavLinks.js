@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import classes from './NavLink.module.css'
 import '@assets/fonts/iconmoon/style.css'
