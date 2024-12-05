@@ -2,16 +2,24 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home/Home';
+import E404 from './pages/404/E404';
 
 const RoutesConfig = () => {
     return (
-        <Routes>
-            <Route
-                path="/" 
-                element={
-                    <Home />
-                } />
-        </Routes>
+        <main>
+            <Routes>
+                <Route
+                    path="/" 
+                    element={
+                        <Home />
+                    } />
+                <Route
+                    path="/*" 
+                    element={
+                        <E404 />
+                    } />
+            </Routes>
+        </main>
     )
 }
 
