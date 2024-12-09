@@ -1,5 +1,5 @@
 footer {
-    border-top: 1px solid #fff;
+    border-top: 1px solid #E5E8EB;
 }
 .footer_wrapper {
     max-width: 960px;
@@ -19,4 +19,15 @@ footer {
     justify-content: center;
     margin: 0 auto; 
     gap: 16px;
+}
+
+
+@media(max-width: 320px) {
+    .nav {
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+
+        text-align: center;
+    }
 }

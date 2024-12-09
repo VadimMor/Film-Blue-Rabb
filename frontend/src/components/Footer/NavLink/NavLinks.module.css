@@ -8,10 +8,21 @@
     color: #9EA3B8;
     text-align: center;
     line-height: 0;
-    
+
     transition: all 0.2s linear;
 }
 .footer_link:focus,
 .footer_link:hover {
     color: #fff;
+}
+
+
+@media(max-width: 320px) {
+    .footer_link {
+        max-width: 100%;
+        padding: 0 15px;
+
+        font-size: 20px;
+        line-height: 1;
+    }
 }

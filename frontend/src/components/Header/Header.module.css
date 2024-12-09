@@ -2,9 +2,6 @@ header {
     width: 100%;
 
     position: fixed;
-
-    background: #121217;
-    border-bottom: 1px solid #E5E8EB;
 }
 .wrapper {
     display: flex;
@@ -14,6 +11,9 @@ header {
     max-width: 1280px;
     width: 100%;
     padding: 12px 40px;
+
+    background: #121217;
+    border-bottom: 1px solid #E5E8EB;
 }
 .link_logo {
     display: flex;
@@ -81,4 +81,117 @@ header {
 }
 .search:focus::placeholder {
     padding-left: 0;
+}
+
+.mobile_nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    margin-top: 61px;
+    padding: 16px;
+    gap: 15px;
+
+    position: absolute;
+    top: -100vh;
+    z-index: -1;
+    background: #121217;
+
+    transition: all 0.3s linear;
+}
+.btn_menu {
+    display: none;
+    max-width: 40px;
+    width: 100%;
+    height: 3px;
+
+    position: absolute;
+    top: 50%;
+    right: 0;
+
+    border-radius: 5px;
+    background: linear-gradient(to right, transparent 45%, #9EA3B8 45%, #9EA3B8 55%, transparent 55%);
+    background-position: 50%;
+    background-size: 1025% 100%;
+
+    transform: translate(-50%, -50%);
+    transition: all 0.2s linear;
+}
+.btn_menu::after,
+.btn_menu::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    left: 50%;
+
+    border-radius: 5px;
+    background: #9EA3B8;
+
+    transform: translate(-50%, -50%);
+    transition: all 0.1s linear;
+}
+.btn_menu::after {
+    top: -250%;
+}
+.btn_menu::before {
+    bottom: -375%;
+}
+
+.active .mobile_nav {
+    top: 0;
+}
+.active .btn_menu {
+    background-size: 100% 100%;
+}
+.active .btn_menu::after {
+    top: 50%;
+
+    transform: translate(-50%, -50%)
+                rotate(-45deg);
+}
+.active .btn_menu::before {
+    top: 50%;
+
+    transform: translate(-50%, -50%)
+                rotate(45deg);
+}
+
+.btn_menu:hover {
+    background: linear-gradient(to right, transparent 45%, #fff 45%, #fff 55%, transparent 55%);
+    background-position: 50%;
+    background-size: 1025% 100%;
+}
+.btn_menu:hover::after,
+.btn_menu:hover::before {
+    background: #fff;
+}
+.active .btn_menu:hover {
+    background-size: 100% 100%;
+}
+
+
+@media(max-width: 425px) {
+    .wrapper {
+        flex-direction: column;
+    }
+    .nav_root {
+        display: none;
+    }
+    .mobile_nav {
+        display: flex;
+    }
+    .search {
+        max-width: 100%;
+    }
+    .nav {
+        flex-direction: column;
+        align-items: start;
+
+        gap: 15px;
+    }
+    .btn_menu {
+        display: block;
+    }
 }

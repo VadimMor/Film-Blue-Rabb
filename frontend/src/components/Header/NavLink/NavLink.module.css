@@ -28,9 +28,35 @@
     text-align: center;
     color:#fff;
 }
+.mobile_text {
+    max-width: 200px;
+    width: 100%;
+
+    position: absolute;
+    top: 50%;
+    left: 200%;
+
+    color: #9EA3B8;
+
+    transition: all 0.2s linear;
+    transform: translate(-50%, -50%);
+}
 
 .nav_link:focus,
 .nav_link:hover {
     box-shadow: 2px 2px 0 #64677a;
     transform: translate(-2px, -2px);
+}
+.mobile_text:focus,
+.mobile_text:hover {
+    color: #fff;
+    
+    transform: translate(calc(-50% + 2px), calc(-50% + 2px));
+}
+
+
+@media(max-width: 425px) {
+    .mobile_text {
+        display: block;
+    }
 }
