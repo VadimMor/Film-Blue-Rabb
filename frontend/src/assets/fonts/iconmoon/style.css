@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?yw4yyd');
-  src:  url('fonts/icomoon.eot?yw4yyd#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?yw4yyd') format('truetype'),
-    url('fonts/icomoon.woff?yw4yyd') format('woff'),
-    url('fonts/icomoon.svg?yw4yyd#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?lhx7wm');
+  src:  url('fonts/icomoon.eot?lhx7wm#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?lhx7wm') format('truetype'),
+    url('fonts/icomoon.woff?lhx7wm') format('woff'),
+    url('fonts/icomoon.svg?lhx7wm#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -26,47 +26,71 @@
 }
 
 .icon-rabbit:before {
-  content: "\e900";
-}
-.icon-attachment:before {
-  content: "\e90b";
-}
-.icon-block:before {
-  content: "\e90c";
-}
-.icon-checkmark:before {
-  content: "\e90d";
-}
-.icon-cog:before {
-  content: "\e90e";
-}
-.icon-information-outline:before {
-  content: "\e90f";
-}
-.icon-user:before {
-  content: "\e910";
-}
-.icon-view-hide:before {
-  content: "\e911";
-}
-.icon-view-show:before {
-  content: "\e912";
-}
-.icon-volume-down:before {
-  content: "\e913";
-}
-.icon-volume-mute:before {
-  content: "\e914";
-}
-.icon-volume-off:before {
-  content: "\e915";
-}
-.icon-volume-up:before {
   content: "\e916";
 }
-.icon-zoom-in:before {
-  content: "\e917";
+.icon-facebook:before {
+  content: "\e900";
 }
-.icon-zoom-out:before {
-  content: "\e918";
+.icon-gift:before {
+  content: "\e901";
+}
+.icon-instagram:before {
+  content: "\e902";
+}
+.icon-notification:before {
+  content: "\e903";
+}
+.icon-search:before {
+  content: "\e904";
+}
+.icon-user:before {
+  content: "\e905";
+}
+.icon-cast:before {
+  content: "\e906";
+}
+.icon-eye:before {
+  content: "\e907";
+}
+.icon-eye-off:before {
+  content: "\e908";
+}
+.icon-rotate-ccw:before {
+  content: "\e909";
+}
+.icon-rotate-cw:before {
+  content: "\e90a";
+}
+.icon-settings:before {
+  content: "\e90b";
+}
+.icon-volume:before {
+  content: "\e90c";
+}
+.icon-volume-1:before {
+  content: "\e90d";
+}
+.icon-volume-2:before {
+  content: "\e90e";
+}
+.icon-volume-x:before {
+  content: "\e90f";
+}
+.icon-star:before {
+  content: "\e910";
+}
+.icon-key:before {
+  content: "\e911";
+}
+.icon-settings1:before {
+  content: "\e912";
+}
+.icon-location:before {
+  content: "\e913";
+}
+.icon-eye1:before {
+  content: "\e914";
+}
+.icon-paperplane:before {
+  content: "\e915";
 }

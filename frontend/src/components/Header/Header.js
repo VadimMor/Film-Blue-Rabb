@@ -1,47 +1,48 @@
 import React from 'react';
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import NavLinks from './NavLink/NavLinks';
+import NavLinks  from './NavLink/NavLinks';
 
 import classes from './Header.module.css'
 
 const Header = () => {
-    const [active, setActive] = useState(false);
-
-    function handleClick() {
-        setActive(!active);
-        console.log(active)
-    }
-    
     return (
-        <div className={active ? classes.active : ''}>
-            <header>
-                <nav className={classes.nav}>
-                    <NavLinks 
-                        path={'/'}
-                        icon={{name: 'rabbit', title: 'logo'}}
-                        text={'Главная'}
-                    />
-                    <NavLinks 
-                        path={'/settings'}
-                        icon={{name: 'user', title: 'Профиль'}}
-                        text={'Профиль'}
-                    />
-                </nav>
-
-                <button
-                    className={classes.burger}
-                    onClick={handleClick}
+        <header>
+            <div className={classes.wrapper}>
+                <Link
+                    to='/'
+                    className={classes.link_logo}
                 >
-                    <span />    
-                </button>
-            </header>
+                    <div className={classes.icon + ' icon-rabbit'}/>
+                    <div className={classes.link_logo_text}>Blue Rabbit</div>
+                </Link>
 
-            <div
-                className={classes.bg}
-                onClick={handleClick}
-            />
-        </div>
+                <div className={classes.nav_root}>
+                    <input
+                        className={classes.search}
+                        type='search'
+                        placeholder='Поиск'
+                    />
+
+                    <nav className={classes.nav}>
+                        <NavLinks 
+                            path={'/gift'}
+                            icon={{name: 'gift', title: 'Подакри'}}
+                            number={1}
+                        />
+                        <NavLinks 
+                            path={'/notification'}
+                            icon={{name: 'notification', title: 'Уведомления'}}
+                            number={10}
+                        />
+                        <NavLinks 
+                            path={'/porfile'}
+                            icon={{name: 'user', title: 'Профиль'}}
+                        />
+                    </nav>
+                </div>
+            </div>
+        </header>
     )
 }
 
