@@ -1,0 +1,17 @@
+.footer_link {
+    display: block;
+    max-width: 160px;
+    width: 100%;
+    padding: 5px;
+
+    font-weight: 400;
+    color: #9EA3B8;
+    text-align: center;
+    line-height: 0;
+    
+    transition: all 0.2s linear;
+}
+.footer_link:focus,
+.footer_link:hover {
+    color: #fff;
+}

@@ -1,0 +1,12 @@
+.social {
+    font-weight: 400;
+    font-size: 23px;
+    color: #9EA3B8;
+    line-height: 1;
+
+    transition: all 0.2s linear;
+}
+.social:focus,
+.social:hover {
+    color: #fff;
+}
