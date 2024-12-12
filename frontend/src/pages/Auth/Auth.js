@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getApi } from '@shared/API/api';
@@ -8,6 +8,7 @@ import { getCookie } from '@shared/cookie/getCookie';
 import classes from './Auth.module.css';
 
 const api = getApi();
+
 
 const pattern = {
     login: /(\b[A-Za-z0-9._%@+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})|(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,28}$)/,
@@ -33,13 +34,20 @@ function validateObject (obj) {
 }
 
 const Auth = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (getCookie('authToken')) {
+            navigate(-1);
+        }
+    }, []);
+
     const [pass, setPass] = useState(true);
     const [formData, setFormData] = useState({
         login: '',
         password: ''
     })
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
 
     function togglePassword() {
         setPass(!pass)
@@ -49,6 +57,13 @@ const Auth = () => {
     function handleChange (e) {
         const {name, value} = e.target;
         setFormData({...formData, [name]: value});
+    }
+
+    function handleKeyPress (e) {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Предотвратить отправку формы по умолчанию
+            getAuth(e);
+        }
     }
 
     // Авторизация полдьзователя
@@ -65,7 +80,7 @@ const Auth = () => {
         if (hasErrors) {
             return; // Прервать выполнение, если есть ошибки
         }
-        
+        console.log(2)
         try {
             const response = await api.getAuth(
                 formData.login,
@@ -84,7 +99,7 @@ const Auth = () => {
     }
 
     return (
-        <div className=' wrapper'>
+        <div className='wrapper'>
             <div className={classes.auth}>
                 <div className={classes.auth_container}>
                     <h3 className={classes.title}>Авторизация</h3>
@@ -95,7 +110,7 @@ const Auth = () => {
                             null
                     }
 
-                    <div className={classes.auth_form}>
+                    <form className={classes.auth_form}>
                         <label className={classes.label}>Логин:
                             <input 
                                 className={
@@ -107,6 +122,8 @@ const Auth = () => {
                                 name="login"
                                 value={formData.login}
                                 onChange={handleChange}
+                                
+                                onKeyDown={handleKeyPress}
                             />
                         </label>
                         
@@ -145,7 +162,7 @@ const Auth = () => {
                         >
                             Войти
                         </button>
-                    </div>
+                    </form>
                     
                     <span className={classes.or}>или</span>
 

@@ -45,7 +45,7 @@ const Header = () => {
                     />
 
                     <nav className={classes.nav}>
-                        {token != null ? (
+                        {token != null && token != '' ? (
                             <>
                                 <NavLinks 
                                     path={'/gift'}
