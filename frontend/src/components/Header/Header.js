@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Link } from 'react-router-dom';
 
 import NavLinks  from './NavLink/NavLinks';
 
+import { getCookie } from '@shared/cookie/getCookie';
+
 import classes from './Header.module.css'
 
 const Header = () => {
+    const [token, setToken] = useState(getCookie('authToken'));
     const [active, setActive] = useState(false);
+
+    // Обновляем токен при изменении куки
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setToken(getCookie('authToken'));
+        }, 1000); // Проверка куки каждые 1 секунду
+
+        return () => clearInterval(interval); // Очищаем интервал при размонтировании
+    }, []);
 
     function toggleMenu () {
         setActive(!active);
@@ -33,20 +45,30 @@ const Header = () => {
                     />
 
                     <nav className={classes.nav}>
-                        <NavLinks 
-                            path={'/gift'}
-                            icon={{name: 'gift', title: 'Подакри'}}
-                            number={1}
-                        />
-                        <NavLinks 
-                            path={'/notification'}
-                            icon={{name: 'notification', title: 'Уведомления'}}
-                            number={10}
-                        />
-                        <NavLinks 
-                            path={'/porfile'}
-                            icon={{name: 'user', title: 'Профиль'}}
-                        />
+                        {token != null ? (
+                            <>
+                                <NavLinks 
+                                    path={'/gift'}
+                                    icon={{name: 'gift', title: 'Подакри'}}
+                                    number={1}
+                                />
+                                <NavLinks 
+                                    path={'/notification'}
+                                    icon={{name: 'notification', title: 'Уведомления'}}
+                                    number={10}
+                                />
+                                <NavLinks 
+                                    path={'/porfile'}
+                                    icon={{name: 'user', title: 'Профиль'}}
+                                />
+                            </>
+                            ) : (
+                                <NavLinks 
+                                    path={'/auth'}
+                                    icon={{name: 'log-in', title: 'Авторизация'}}
+                                />
+                            )
+                        }
                     </nav>
                 </div>
 

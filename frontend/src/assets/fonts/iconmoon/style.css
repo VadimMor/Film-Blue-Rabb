@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?lhx7wm');
-  src:  url('fonts/icomoon.eot?lhx7wm#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?lhx7wm') format('truetype'),
-    url('fonts/icomoon.woff?lhx7wm') format('woff'),
-    url('fonts/icomoon.svg?lhx7wm#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?gmwvxh');
+  src:  url('fonts/icomoon.eot?gmwvxh#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?gmwvxh') format('truetype'),
+    url('fonts/icomoon.woff?gmwvxh') format('woff'),
+    url('fonts/icomoon.svg?gmwvxh#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -55,6 +55,21 @@
 .icon-eye-off:before {
   content: "\e908";
 }
+.icon-log-in:before {
+  content: "\e917";
+}
+.icon-log-out:before {
+  content: "\e918";
+}
+.icon-map-pin:before {
+  content: "\e919";
+}
+.icon-maximize-2:before {
+  content: "\e91a";
+}
+.icon-minimize-2:before {
+  content: "\e91b";
+}
 .icon-rotate-ccw:before {
   content: "\e909";
 }
@@ -63,6 +78,12 @@
 }
 .icon-settings:before {
   content: "\e90b";
+}
+.icon-skip-back:before {
+  content: "\e91c";
+}
+.icon-skip-forward:before {
+  content: "\e91d";
 }
 .icon-volume:before {
   content: "\e90c";
@@ -75,6 +96,9 @@
 }
 .icon-volume-x:before {
   content: "\e90f";
+}
+.icon-x:before {
+  content: "\e91e";
 }
 .icon-star:before {
   content: "\e910";

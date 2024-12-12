@@ -10,7 +10,7 @@ module.exports = function override(config, env) {
         alias: {
         ...config.resolve.alias,
         '@components': path.resolve(__dirname, './src/components/'),
-        '@utils': path.resolve(__dirname, './src/utils/'),
+        '@shared': path.resolve(__dirname, './src/shared/'),
         '@assets': path.resolve(__dirname, './src/assets/'),
         },
     };

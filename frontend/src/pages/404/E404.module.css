@@ -2,12 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    position: absolute;
-    top: 45%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
 }
 .e404_title {
     margin-bottom: 25px;
@@ -16,4 +10,11 @@
 }
 .e404_text {
     font-size: 30px;
+}
+
+
+@media(max-width: 425px) {
+    .e404_title {
+        font-size: 100px;
+    }
 }

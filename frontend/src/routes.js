@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home/Home';
 import E404 from './pages/404/E404';
+import Auth from './pages/Auth/Auth';
 
 const RoutesConfig = () => {
     return (
@@ -12,6 +13,11 @@ const RoutesConfig = () => {
                     path="/" 
                     element={
                         <Home />
+                    } />
+                <Route
+                    path="/auth" 
+                    element={
+                        <Auth />
                     } />
                 <Route
                     path="/*" 
