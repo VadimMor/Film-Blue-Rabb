@@ -2,7 +2,6 @@ import { NavLink } from 'react-router';
 
 import classes from './Header.module.css'
 import '../../assets/fonts/iconmoon/style.css'
-import search from '../../assets/icon/search.svg'
 import { useState } from 'react';
 
 function Header() {
@@ -66,7 +65,7 @@ function Header() {
                 </div>
 
                 {
-                    !token ? (
+                    token ? (
                         <>
                             <div className={classes.menu}>
                                 <NavLink 
