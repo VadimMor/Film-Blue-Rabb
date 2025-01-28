@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router';
+import { useState } from 'react';
 
 import classes from './Header.module.css'
 import '../../assets/fonts/iconmoon/style.css'
-import { useState } from 'react';
 
 function Header() {
     const [token, setToken] = useState(false);
@@ -17,7 +17,8 @@ function Header() {
             <div className={classes.container}>
                 <NavLink 
                 className={classes.logo}
-                to="/">
+                to="/"
+                alt="Главная">
                     film rabb
                 </NavLink>
 
@@ -34,18 +35,21 @@ function Header() {
                                     <NavLink 
                                         to="/likes"
                                         className={classes.link+" icon-heart"}
+                                        alt="Избранное"
                                     />
                                 </div>
 
                                 <NavLink 
                                     to="/profile"
                                     className={classes.link+" icon-user"}
+                                    alt="Профиль"
                                 />
                             </>
                         ) : (
                             <NavLink 
                                 to="/auth"
                                 className={classes.link+" icon-enter"}
+                                alt="Вход"
                             />
                         )
                     }
@@ -71,6 +75,7 @@ function Header() {
                                 <NavLink 
                                     to="/likes"
                                     className={classes.link}
+                                    alt="Избранное"
                                 >
                                     <span className="icon-heart" />
                                     Избранное
@@ -80,6 +85,7 @@ function Header() {
                             <NavLink 
                                 to="/profile"
                                 className={classes.link}
+                                alt="Профиль"
                             >
                                 <span className="icon-user" />
                                 Профиль
@@ -89,6 +95,7 @@ function Header() {
                         <NavLink 
                             to="/auth"
                             className={classes.link}
+                            alt="Вход"
                         >
                             <span className="icon-enter" />
                             Вход
