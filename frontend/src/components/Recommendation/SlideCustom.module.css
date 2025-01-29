@@ -1,0 +1,58 @@
+.content {
+    display: block;
+    max-width: 928px;
+    width: 100%;
+
+    position: relative;
+
+    border-radius: 12px;
+}
+.content::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+
+    background: linear-gradient(rgba(0,0,0,10%), rgba(0,0,0,40%));
+}
+.img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: all 0.15s linear;
+}
+.text {
+    width: 80%;
+
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    z-index: 10;
+
+    font-weight: 600;
+    font-size: 48px;
+    letter-spacing: -2px;
+    text-align: center;
+
+    transform: translateX(-50%);
+}
+.content:hover .img,
+.content:focus .img,
+.content:active .img {
+    transform: scale(1.2);
+}
+
+
+@media (max-width: 634px) {
+    .text {
+        width: 90%;
+
+        font-size: 25px;
+    }
+}

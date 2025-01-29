@@ -1,0 +1,4 @@
+.swiper_pagination_active {
+    background: var(--main-color);
+    opacity: 1;
+}

@@ -80,6 +80,9 @@ h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: 400;}
 .container {
 	max-width: 990px;
 	width: 100%;
-	padding: 0 15px;
+	padding: 16px 15px;
 	margin: 0 auto;
+}
+.PD {
+	padding: 16px;
 }

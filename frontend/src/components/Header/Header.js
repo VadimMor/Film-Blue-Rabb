@@ -36,6 +36,7 @@ function Header() {
                                         to="/likes"
                                         className={classes.link+" icon-heart"}
                                         alt="Избранное"
+                                        title="Избранное"
                                     />
                                 </div>
 
@@ -43,6 +44,7 @@ function Header() {
                                     to="/profile"
                                     className={classes.link+" icon-user"}
                                     alt="Профиль"
+                                    title="Профиль"
                                 />
                             </>
                         ) : (
@@ -50,6 +52,7 @@ function Header() {
                                 to="/auth"
                                 className={classes.link+" icon-enter"}
                                 alt="Вход"
+                                title="Вход"
                             />
                         )
                     }
@@ -76,6 +79,7 @@ function Header() {
                                     to="/likes"
                                     className={classes.link}
                                     alt="Избранное"
+                                    title="Избранное"
                                 >
                                     <span className="icon-heart" />
                                     Избранное
@@ -86,6 +90,7 @@ function Header() {
                                 to="/profile"
                                 className={classes.link}
                                 alt="Профиль"
+                                title="Профиль"
                             >
                                 <span className="icon-user" />
                                 Профиль
@@ -96,6 +101,7 @@ function Header() {
                             to="/auth"
                             className={classes.link}
                             alt="Вход"
+                            title="Вход"
                         >
                             <span className="icon-enter" />
                             Вход
